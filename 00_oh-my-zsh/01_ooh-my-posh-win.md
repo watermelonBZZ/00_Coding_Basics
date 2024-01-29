@@ -124,3 +124,13 @@ Windows Terminal（普通版）：C:\Users\[用户名]\AppData\Local\Packages\Mi
 再到设置 ---> 功能 ---> 终端 --->  Font Family : 设置安装的字体 <FontName> 
 
 这样，内置终端就不会出现符号乱码的情况了
+
+### 在 VSCode 中设置字体加粗的方法如下：
+
+打开 VSCode 的首选项设置（File > Preferences > Settings）。
+
+在搜索栏中输入 "editor.fontWeight", “terminal.integrated.fontWeight”。
+
+在 "editor.fontWeight" 的值后面填入 "bold"。
+
+点击 "OK" 按钮来保存设置。
