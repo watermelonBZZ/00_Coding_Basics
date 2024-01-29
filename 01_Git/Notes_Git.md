@@ -173,7 +173,7 @@ ls -ltr可以查看文件ssh文件
 .pub为后缀的是keygen文件
 vi Name.pub //打开
 
-然后添加到github上
+然后添加到github上,用有.pub的
 
 这里回到terminal 配置一下这段代码
 
@@ -183,8 +183,10 @@ tail -5 config //意思是在congif文件后面加5句话
 Host github.com
 HostName github.com
 PreferredAuthentications publickey
-IdentityFile ~/.ssh/<SSHfileName>
+IdentityFile ~/.ssh/<SSHfileName(without'.pub')>
 ```
+
+
 
 意思是当访问github时，指定使用相应文件名称的keygen
 
