@@ -87,6 +87,22 @@ Import-Module posh-git # git的自动补全
 
 ![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/ce8ca0515fc54beda1606f1158d00bbd~tplv-k3u1fbpfcp-zoom-in-crop-mark:1512:0:0:0.awebp?)
 
+### 如何更换oh-my-posh的主题
+
+在terminal中`code $PROFILE`文件中的`--config` 参数，比如替换掉`jandedobbeleer.omp.json`中的`jandedobbeleer`为任意主题
+
+
+执行`Get-PoshThemes`，它会展示所有的theme
+
+theme文件夹在win中的位置：
+
+'C:\Users\USERNAME\AppData\Local\Programs\oh-my-posh\themes'
+
+**docs：**
+
+https://ohmyposh.dev/docs/configuration/colors
+
+
 ## Q & A
 
 ### 为什么在VSCode/Webstorm编辑器的集成终端中出现了乱码
@@ -97,9 +113,7 @@ Import-Module posh-git # git的自动补全
 
 您的系统比较老旧，请参照[使用 winget 工具安装和管理应用程序 | Microsoft Docs](https://link.juejin.cn/?target=https%3A%2F%2Fdocs.microsoft.com%2Fzh-cn%2Fwindows%2Fpackage-manager%2Fwinget%2F "https://docs.microsoft.com/zh-cn/windows/package-manager/winget/")安装winget。
 
-### 如何更换oh-my-posh的主题
 
-请执行`Get-PoshThemes`，它会展示所有的theme，之后修改`$PROFILE`文件中的`--config` 参数，比如替换掉`jandedobbeleer.omp.json`中的`jandedobbeleer`为任意主题
 
 ### 附上 settings.json 配置文件所在路径：
 
