@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <!-- Create a click recorder. -->
+    <!-- <div class="display"></div>
+    <script>
+        const display = document.querySelector('.display')
+        document.addEventListener('click', (e) => {
+            const newElement = document.createElement('h1')
+            newElement.innerText = `x:${e.clientX}, y:${e.clientY}`
+            display.prepend(newElement)
+        })
+    </script> -->
+
+    <!-- counter clicker -->
+    <!-- <button class="addCounter">add Counter</button>
+    <div class="display"></div>
+
+    <script>
+        const display = document.querySelector('.display')
+        const addCounter = document.querySelector('.addCounter')
+
+        addCounter.addEventListener('click', () => {
+            let counter = 0
+            const newElement = document.createElement('h1')
+            newElement.innerText = `${counter} clicks`
+
+            newElement.addEventListener('click', function () {
+                counter += 1
+
+                this.innerText = `${counter} clicks`
+            })
+
+            display.prepend(newElement)
+        })
+
+    </script> -->
+
+    <!-- Build this experience -->
+    <button class="addPerson">Add Person</button>
+    <div class="inputsBox"></div>
+    <hr>
+    <h2>Registered</h2>
+    <div class="display"></div>
+
+    <script>
+        const addPersonbtn = document.querySelector('.addPerson')
+        const inputsBox = document.querySelector('.inputsBox')
+        const display = document.querySelector('.display')
+
+        addPersonbtn.addEventListener('click', () => {
+            const element = document.createElement('div')
+            inputsBox.append(element)
+
+            const fNameInput = document.createElement('input')
+            const lNameInput = document.createElement('input')
+
+            const registerBtn = document.createElement('button')
+            registerBtn.innerText = 'Register'
+
+            element.append('First Name:')
+            element.append(fNameInput)
+
+            element.append('Last Name:')
+            element.append(lNameInput)
+            element.append(registerBtn)
+
+            //Register click
+            registerBtn.addEventListener('click', () => {
+
+                if (!display.innerText.length) {
+                    display.innerText = `${fNameInput.value} ${lNameInput.value}`
+                }
+                else {
+                    display.innerText = `${display.innerText}, ${fNameInput.value} ${lNameInput.value}`
+                }
+
+
+                element.remove()
+            })
+
+        })
+
+
+    </script>
+</body>
+
+</html>

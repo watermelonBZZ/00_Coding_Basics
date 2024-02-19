@@ -1,0 +1,19 @@
+<h1>Add Option</h1>
+<input type="text" class="textBox" />
+<button class="add">Add</button>
+<select class="select"></select>
+
+<script>
+    const addButton = document.querySelector(".add")
+    const textBox = document.querySelector(".textBox")
+    const select = document.querySelector(".select")
+
+    const data = []
+
+    addButton.onclick = () => {
+        data.unshift(`<option>${textBox.value}</option>`)
+        select.innerHTML = `${data}`
+    }
+
+
+</script>

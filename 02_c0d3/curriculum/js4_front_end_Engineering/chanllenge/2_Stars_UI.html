@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://kit.fontawesome.com/18da2d4cfc.js" crossorigin="anonymous"></script>
+    <style>
+        .fa-star {
+            font-size: 30px;
+            cursor: pointer;
+
+        }
+
+        .fa-solid.fa-star {
+            -webkit-text-stroke-width: 3px;
+            -webkit-text-stroke-color: black;
+            color: yellow
+        }
+    </style>
+</head>
+
+<body>
+    <div class="starContainer"></div>
+    <div>
+        <p>You <span class="tense">are giving</span> <span class="starCount">0</span> Stars!</p>
+    </div>
+
+    <script>
+        //
+        starNum = 5
+
+        //startList necessary,
+        //as when mouse hover, not only the hovered element needs to be on different style, the rest also need to be considered
+
+        // index +-, and a endnum will help
+        startList = []
+        let selectionLocked = false;
+
+
+        const starContainer = document.querySelector('.starContainer')
+        const tense = document.querySelector('.tense')
+        const starCount = document.querySelector('.starCount')
+
+        starContainer.onmouseenter = () => {
+            selectionLocked = false;
+            tense.innerText = 'are giving'
+        }
+
+        const upTo = (target, func, idx = 0) => {
+            if (idx >= target) return
+            func(idx)
+            return upTo(target, func, idx + 1)
+        }
+
+
+
+        function Star(i) {
+            selectionLocked = false;
+
+            //to change the star style when mousehover
+            this.toggle = (delStr, addStr) => {
+                s.classList.remove(delStr)
+                s.classList.add(addStr)
+            }
+
+            this.lightUpstar = () => {
+                const endTarget = i + 1
+                starCount.innerText = `${endTarget}`
+
+                //set mouseover on solid style
+                upTo(endTarget, (idx) => {
+                    return startList[idx].toggle(`fa-regular`, `fa-solid`)
+                })
+
+                //set the rest on regular style
+                upTo(startList.length, (idx) => {
+                    return startList[idx].toggle(`fa-solid`, `fa-regular`)
+                }, endTarget)
+
+            }
+
+            const s = document.createElement('i')
+
+            s.className = 'fa-regular fa-star'
+
+            //mouseover to be yellow stars
+            s.onmouseover = () => {
+                if (selectionLocked) return
+                this.lightUpstar()
+            }
+
+            s.onclick = () => {
+                selectionLocked = true
+                tense.innerText = 'have given'
+                // this.lightUpstar()
+            }
+
+
+            starContainer.append(s)
+
+        }
+
+        upTo(starNum, (idx) => {
+            startList.push(new Star(idx))
+        })
+
+        // console.log(startList);
+
+    </script>
+</body>
+
+</html>

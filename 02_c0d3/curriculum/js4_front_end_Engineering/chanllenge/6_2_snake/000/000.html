@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <style>
+        #board {
+            box-sizing: border-box;
+            border: 2px solid #aaa;
+            position: relative;
+        }
+
+        .block {
+            position: absolute;
+            box-sizing: border-box;
+            border: 1px solid #000;
+            background: #aaa;
+        }
+
+        .food {
+            background: yellow;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="board"></div>
+
+    <script>
+        const border = document.getElementById('board')
+
+        const blockSize = 30
+        const height = 10
+        const width = 30
+        board.style.height = `${height * blockSize}px`
+        board.style.width = `${width * blockSize}px`
+
+        function Block() {
+            this.getNextPos = dir => {
+                switch (dir) {
+                    case 'ArrowLeft': // Left
+
+                        return { top: this.top, left: this.left - 1 }
+                    case 'ArrowUp': // Up
+
+                        return { top: this.top - 1, left: this.left }
+                    case 'ArrowRight': // Right
+
+                        return { top: this.top, left: this.left + 1 }
+                    case 'ArrowDown': // Down
+
+                        return { top: this.top + 1, left: this.left }
+                    default:
+                        return { top: this.top, left: this.left }
+                }
+            }
+            this.setPos = (top, left) => {
+                this.top = top
+                this.left = left
+                element.style.top = `${this.top * blockSize}px`
+                element.style.left = `${this.left * blockSize}px`
+                element.style.height = `${blockSize}px`
+                element.style.width = `${blockSize}px`
+            }
+
+            const element = document.createElement('div')
+            this.clList = element.classList
+            element.classList.add('block')
+            this.setPos(
+                Math.floor(Math.random() * height),
+                Math.floor(Math.random() * width)
+
+            )
+            border.appendChild(element)
+
+        }
+
+
+
+        //snake is an obj
+        const snake = {
+            head: new Block(), //head is an obj
+            direction: 'ArrowLeft',
+            move: () => {
+                let pos = snake.head.getNextPos(snake.direction)
+
+                if (pos.top === food.top && pos.left === food.left) {
+
+                    food.next = snake.head //oldhead
+                    snake.head.previous = food //food
+                    snake.head = food //food
+
+
+                    food = new Block()
+
+                    return
+                }
+
+                // 在屏幕上更新snake top和left之前，判断位置是否越界，更改helper，如果是false，下一次cb move就会报错
+                updateGame(pos)
+
+                //oldhead
+
+                snake.tail.setPos(pos.top, pos.left)
+
+                //when head is newHead, tail:0(oldnode),
+                //so now, head and tail are different address
+                if (snake.head === snake.tail) return
+
+                const tmp = snake.tail //obj with nextPos
+                snake.tail = tmp.previous //food
+                snake.tail.next = null // Tail next is always null
+
+                // Setup new head
+                tmp.previous = null // Head never have previous
+                tmp.next = snake.head
+                snake.head.previous = tmp
+                snake.head = tmp
+
+            }
+
+        }
+        let food = new Block()
+
+        snake.tail = snake.head
+        let shouldContinue = true
+
+        const updateGame = (pos) => {
+            if (
+                pos.top < 0 || pos.top > height ||
+                pos.left < 0 || pos.left > width
+                // ||checkSnakeNode(pos,sneak.head)
+            ) {
+                return shouldContinue = false
+            }
+        }
+
+        //每隔一段时间调用move方法来更新snake的top，left数据
+        const move = () => {
+            if (!shouldContinue) {
+                return alert('Game over. Please refresh the page to continue')
+            }
+            snake.move()
+            // console.log(snake.tail, snake.head)
+            setTimeout(move, 500);
+        }
+        setTimeout(move, 1000)
+
+        let lastInputDirection = 'ArrowLeft'
+        document.onkeydown = (e) => {
+            lastInputDirection = snake.direction
+            if (lastInputDirection === 'ArrowLeft' && e.key === 'ArrowRight') {
+                return snake.direction = lastInputDirection
+            }
+            if (lastInputDirection === 'ArrowRight' && e.key === 'ArrowLeft') {
+                return snake.direction = lastInputDirection
+            }
+            if (lastInputDirection === 'ArrowUp' && e.key === 'ArrowDown') {
+                return snake.direction = lastInputDirection
+            }
+            if (lastInputDirection === 'ArrowDown' && e.key === 'ArrowUp') {
+                return snake.direction = lastInputDirection
+            }
+            return snake.direction = e.key
+        }
+
+    </script>
+</body>
+
+</html>

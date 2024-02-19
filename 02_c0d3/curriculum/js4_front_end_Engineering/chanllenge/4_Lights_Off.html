@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Light Off</title>
+    <script src="https://kit.fontawesome.com/18da2d4cfc.js" crossorigin="anonymous"></script>
+    <style>
+        .container {
+            cursor: pointer;
+        }
+
+        .default {
+            box-sizing: border-box;
+            display: inline-block;
+            width: 50px;
+            height: 50px;
+            background-color: #aaa;
+            border: 1px solid black;
+
+            text-align: center;
+            vertical-align: bottom;
+
+        }
+
+        .fa-solid.fa-lightbulb {
+            font-size: 35px;
+            line-height: 50px;
+            /* margin-top: 5px; */
+            color: orange;
+
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container"></div>
+
+    <script>
+
+        let requireDefault = 2
+        let blockList = []
+        const container = document.querySelector('.container')
+
+        const lightStart = () => {
+            const r = Math.floor(Math.random() * requireDefault)
+            const c = Math.floor(Math.random() * requireDefault)
+            blockList[r][c].lightUp()
+            // blockList[r][c].lightUp()
+            return
+        }
+
+        const isWin = (r = 0, c = 0) => {
+            if (r === blockList.length) {
+                return true
+            }
+
+            if (c === blockList.length) {
+                return isWin(r + 1, 0)
+            }
+            if (blockList[r][c].light) return false
+            return isWin(r, c + 1)
+        }
+
+
+        //
+        function Block(r, c) {
+            this.b = document.createElement('div')
+            this.light = false
+            this.b.classList.add('default')
+            this.b.onclick = () => {
+                if (!this.light) return
+                this.lightUp()
+
+                const surrounds = [[r - 1, c], [r, c - 1], [r, c + 1], [r + 1, c]]
+
+                surrounds.forEach((e) => {
+                    if (blockList[e[0]] && blockList[e[0]][e[1]]) {
+                        blockList[e[0]][e[1]].lightUp()
+                    }
+                })
+                if (isWin()) {
+                    requireDefault = +prompt('You won! Play again with different size? 0 to stop playing')
+
+                    requireDefault = requireDefault < 2 ? 2 : requireDefault
+
+                    if (requireDefault) {
+                        container.innerHTML = ''
+                        blockList = []
+                        setGame()
+                    }
+                }
+
+
+            }
+
+
+            this.lightUp = () => {
+                this.light = !this.light
+
+                if (this.light) {
+                    this.b.innerHTML = '<i class="fa-solid fa-lightbulb"></i>'
+                    this.b.style.backgroundColor = 'beige'
+                }
+                if (!this.light) {
+                    this.b.innerHTML = ''
+                    this.b.style.backgroundColor = '#aaa'
+                }
+            }
+
+            container.append(this.b)
+
+        }
+
+        const build = (require = requireDefault, r = 0, c = 0, store = []) => {
+            if (r === require) return
+            if (c === require) {
+                blockList.push(store)
+                return build(require, r + 1, 0, [])
+            }
+            store.push(new Block(r, c))
+            return build(require, r, c + 1, store)
+        }
+
+
+
+        const setGame = () => {
+            document.body.style.width = `${requireDefault * 50}px`
+
+            build()
+            lightStart()
+        }
+        setGame()
+        console.log(blockList)
+
+
+    </script>
+</body>
+
+</html>

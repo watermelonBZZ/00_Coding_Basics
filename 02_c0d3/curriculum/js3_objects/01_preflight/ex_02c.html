@@ -1,0 +1,62 @@
+<h1>TODO LIST</h1>
+
+<input type="text" class="filterInput" />
+<button class="filterButton">filter</button>
+
+<input type="text" class="newInput" />
+<button class="add">Add</button>
+
+<div class="todolist"></div>
+
+<script>
+    const list = document.querySelector(".todolist")
+    const buttonElement = document.querySelector(".add")
+    const inputElement = document.querySelector(".newInput")
+
+    const filterButton = document.querySelector(".filterButton")
+    const filterInput = document.querySelector(".filterInput")
+
+    //不可以给 []，因为JSON.parse(localData) 需要有限value
+    const localData = localStorage.getItem('todo') || ''
+    const todos = JSON.parse(localData)
+
+    //默认传入add的todos作为render的array
+    //但如果filterbutton被激活，就会传入一个filteredtodos作为array执行函数
+    const render = (arr = todos) => {
+        const newData = JSON.stringify(arr)
+        localStorage.setItem('todo', newData)
+
+        list.innerHTML = arr.reduce((acc, e) => { return acc + `<h2 class='todo'>${e}</h2>` }, '')
+
+        const todoElements = document.querySelectorAll('.todo')
+        todoElements.forEach((e, i) => {
+            e.onclick = () => {
+                //不管在filter页面还是在普通渲染，删除的都是todos的array
+                todos.splice(i, 1)
+                render()
+            }
+        });
+    }
+
+
+    buttonElement.onclick = () => {
+        const newValue = inputElement.value
+        todos.unshift(newValue)
+        render()
+    }
+
+
+    filterButton.onclick = () => {
+        const filterValue = filterInput.value
+
+        const filteredtodos = todos.filter((e) => { return e.includes(filterValue) })
+        render(filteredtodos)
+    }
+
+    render()
+
+
+
+
+
+</script>

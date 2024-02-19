@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <!-- 02_Part1_Exercises -->
+    <!-- exercise 1  -->
+    <!-- <div>
+        <div class="container">
+            <h1>Hello</h1>
+            <input class='input' type='text' />
+            <button class='button'>change</button>
+        </div>
+        <script>
+            let input = document.querySelector('.input')
+            let button = document.querySelector('.button')
+            const box = document.querySelector('.container')
+
+            const prepareTheButton = () => {
+                box.innerHTML = `
+            <h1>${input.value}</h1>
+            <input class ='input' type='text' placeholder='${input.value}'/>
+            <button class ='button'>change</button>
+          `
+                input = document.querySelector('.input')
+                button = document.querySelector('.button')
+                button.onclick = prepareTheButton
+
+            }
+            button.onclick = prepareTheButton
+
+        </script>
+    </div> -->
+
+    <!-- exercise 2  -->
+    <!-- 2.1 my answer -->
+    <!-- <div class="containter">
+        <button class="Button">start</button>
+
+        <script>
+            let button = document.querySelector('.Button')
+            let box = document.querySelector('.containter')
+
+            // const cancel = () => {
+            //     box.innerHTML = `
+            //     <button class="Button">start</button>
+            //     `
+            //     button = document.querySelector('.Button')
+            // }
+
+            const start = () => {
+                box.innerHTML = `
+                <input/>
+                <button class="Cancel">Cancel</button>
+                `
+                box = document.querySelector('.containter')
+                let cancel = document.querySelector('.Cancel')
+
+                cancel.onclick = () => {
+                    box.innerHTML = `
+                    <button class="Button">start</button>
+                    `
+                    button = document.querySelector('.Button')
+                    button.onclick = start
+
+                }
+            }
+            button.onclick = start
+        </script>
+    </div> -->
+
+    <!-- 2.2 c0d3 answer -->
+    <!-- <div class="container"></div>
+    <script>
+        const box = document.querySelector('.container')
+        const startApp = () => {
+            box.innerHTML = `
+            <button class = 'startButton'>start</button>
+            `
+            const startButton =
+                document.querySelector('.startButton');
+
+            startButton.onclick = () => {
+                box.innerHTML = `
+                <input/>
+                <button class = 'cancelButton'>cancel</button>
+            `
+                const cancelButton =
+                    document.querySelector('.cancelButton');
+                cancelButton.onclick = startApp
+
+            }
+        }
+        startApp()
+    </script> -->
+
+    <!-- exercise 3，有点难度 -->
+    <!-- 3.1 my answer -->
+    <!-- <div class="container">
+
+
+        <script>
+            const container = document.querySelector(".container")
+            const startApp = () => {
+                container.innerHTML = `
+                <input type="text" class="num1" />
+                <button class="startButton">start</button>
+                `
+                const startButton = document.querySelector(".startButton")
+                const num1 = document.querySelector(".num1")
+
+                startButton.onclick = () => {
+                    const num1Value = num1.value
+
+                    container.innerHTML = `
+                    
+                    <input type = "text" class="num2" />
+                    <button class="addButton">Add</button>
+                    <button class="goBackButton">GoBack</button>
+                    <h1>${num1Value} + </h1>
+                    `
+
+                    const addButton = document.querySelector(".addButton")
+
+
+
+
+                    addButton.onclick = () => {
+                        const num2 = document.querySelector(".num2")
+                        const num2Value = +num2.value
+                        let result = parseInt(num1Value) + parseInt(num2Value)
+
+                        container.innerHTML = `
+                    
+                            <input type = "text" class="num2" />
+                            <button class="addButton">Add</button>
+                            <button class="goBackButton">GoBack</button>
+                            <h1>${num1.value} + ${num2.value} = ${result} </h1>
+                        `
+                        const addButton1 = document.querySelector(".addButton")
+                        addButton1.onclick = addButton.onclick
+
+
+                        const goBackButton = document.querySelector(".goBackButton")
+                        goBackButton.onclick = startApp
+
+                    }
+
+
+                    const goBackButton = document.querySelector(".goBackButton")
+                    goBackButton.onclick = startApp
+                }
+
+
+            }
+
+            startApp()
+        </script>
+
+    </div> -->
+
+    <!-- 3.2 c0d3 answer -->
+    <!-- <div class="container"> </div>
+    <h1 class="display"></h1> -->
+    <!-- 通过两个盒子简化代码，一个展示信息接受与互动（value更新，但是界面更新少），一个展示结果（经常要更新） -->
+    <!-- <script>
+        const containerElement = document.querySelector('.container')
+
+        const displayElement = document.querySelector('.display')
+        //得到两个初始值都为空的html元素，为后续设置展示value做准备
+
+        const solution = (a) => {
+            return (b) => {
+                return a + b
+            }
+        }
+        //加法函数
+
+        const startApp = () => {
+            displayElement.innerText = ''
+            //设置展示结果区域初始值为空字符串
+
+            containerElement.innerHTML = `
+      <input class="startingInput" type="number"/>
+      <button class="start">Start</button>
+      ` //互动区域（div）添加子元素：一个input，一个button
+
+            const startButton = document.querySelector('.start')
+            const startingInput = document.querySelector('.startingInput')
+            //得到互动区域的两个子元素，为后续互动做准备
+
+            startButton.onclick = () => {
+                const startValue = +startingInput.value
+                //获取用户在input框里输入的数据
+
+                const add1 = solution(startValue)
+                // 传入加法函数，作为第一个参数a
+
+                displayElement.innerText = `${startValue} + `
+                //展示结果区域内，更新用户输入的数据
+
+                containerElement.innerHTML = `
+                //用户互动界面更新三个子元素
+                
+                <input class="secondInput" type="number" /> 
+                //被加数b
+
+      
+                <button class="add">Add</button>
+                <button class="cancel">GoBack</button>
+                //两个新的button界面
+                `
+                //点了新的button之后，互动界面更新
+                const addButton = document.querySelector('.add')
+
+                //点了新的addButton之后，互动界面更新
+                addButton.onclick = () => {
+                    // 获得被加数
+                    const secondInput = document.querySelector('.secondInput')
+                    const secondValue = +secondInput.value
+                    const result = add1(secondValue)
+
+                    //展示结果区域更新为目标形式
+                    displayElement.innerText = `${startValue} + ${secondValue} = ${result}`
+
+                    //好像这步有没有都可以
+                    secondInput.value = ''
+                }
+
+                const cancelButton = document.querySelector('.cancel')
+                cancelButton.onclick = startApp
+            }
+        }
+
+        startApp()
+    </script>
+ -->
+
+    <!-- exercise 4  -->
+    <!-- 4.1 my answer -->
+    <!-- <div class="container"></div>
+    <h1 class="display"></h1>
+
+    <script>
+        const container = document.querySelector('.container')
+        const display = document.querySelector('.display')
+
+        const func = (times, i = 0, result = '') => {
+            if (i == times) {
+                return result
+            }
+
+            i += 1
+            return func(times, i, result + 'Hello')
+        }
+
+        const startAPP = () => {
+            display.innerText = '' //checked?
+            container.innerHTML = `
+            <input type="text" class="num">
+            <button class="generateButton">Generate</button>
+            `
+            const generateButton = document.querySelector('.generateButton')
+            const num = document.querySelector('.num')
+
+            generateButton.onclick = () => {
+
+                const numValue = num.value
+                const result = func(numValue)
+                display.innerText = `${result}`
+
+            }
+
+        }
+
+        startAPP()
+    </script> -->
+
+    <!-- 4.2 c0d3 answer -->
+    <!-- <input class="totalInput" />
+    <button class="generate">Generate</button>
+    <h1 class="display"></h1>
+
+    <script>
+        const totalInput = document.querySelector('.totalInput')
+        const displayElement = document.querySelector('.display')
+        const generateButton = document.querySelector('.generate')
+
+        const addHello = (num, result = "") => {
+            if (num <= 0) return result
+            return addHello(num - 1, result + 'Hello')
+        }
+
+        generateButton.onclick = () => {
+            const result = addHello(+totalInput.value)
+            displayElement.innerText = result
+        }
+    </script> -->
+
+    <!-- exercise 5  -->
+    <!-- 5.1 my answer -->
+    <!-- <input type="text" class="input">
+    <button class="generate">Generate</button>
+    <div class="display"></div>
+
+
+    <script>
+        const generate = document.querySelector(".generate")
+        const input = document.querySelector(".input")
+        const display = document.querySelector(".display")
+
+        const split = (str, i = 0, result = '') => {
+            if (i >= str.length) return result
+
+            // ！！这一步好聪明啊！！
+            result += `<h1>${str[i]}</h1>`
+            return split(str, i + 1, result)
+        }
+
+
+        generate.onclick = () => {
+            const inputValue = input.value
+
+            const result = split(inputValue)
+            display.innerHTML = result
+        }
+
+
+
+    </script> -->
+    <!-- 5.2 c0d3 answer 差不多一样-->
+
+    <!-- exercise 6  -->
+    <!-- 6.1 my answer -->
+    <!-- <input type="number" class="input">
+    <button class="startButton">Start</button>
+    <h1 class="display"></h1>
+
+    <script>
+
+        const input = document.querySelector('.input')
+        const startButton = document.querySelector('.startButton')
+        const display = document.querySelector('.display')
+
+        const isPrime = (inputNum, i = 2) => {
+            if (inputNum < 2) return true
+
+            if (inputNum === i) return true
+
+            if (inputNum % i === 0) return false
+
+            return isPrime(inputNum, i + 1)
+
+        }
+
+        const primeMachine = (inputNum, result = '') => {
+            if (inputNum < 2) return result
+
+            if (isPrime(inputNum)) {
+                result = `<h1>${inputNum}</h1>${result}`
+            }
+
+            return primeMachine(inputNum - 1, result)
+
+        }
+
+        startButton.onclick = () => {
+            const inputValue = +input.value
+            if (inputValue < 2) {
+                return alert("Please Enter a value greater than 2")
+            }
+
+            display.innerHTML = primeMachine(inputValue)
+            //如果函数结果是<tag>形式，用innerHTML直接赋值，不用innerHTML= ``句法
+
+
+        }
+    </script> -->
+    <!-- 6.2 c0d3 answer 差不多一样-->
+
+    <!-- exercise 7  -->
+    <!-- 7.1 my answer -->
+    <!-- <input type="text" class="input">
+    <button class="startButton">Start</button>
+    <h1 class="display"></h1>
+
+    <script>
+        const input = document.querySelector('.input')
+        const startButton = document.querySelector('.startButton')
+        const display = document.querySelector('.display')
+
+        const strsplit = (str, i = 0, result = '') => {
+            if (i === str.length) return
+            setTimeout(() => {
+                result = `${result}${str[i]}` //这句开头没有const，不然就是shadow variable（和父函数都有result变量），但这里目的是更新父函数的result，所以不用const
+                // 且全局声明的变量，是可以直接获得并调用的
+                display.innerText = result
+                // 其实是200ms之后，整个展示结果都被更新了，不是单独最后一个数字被添加（肉眼只看出来200ms后，只添加了最后新的数据）
+                strsplit(str, i + 1, result)
+            }, 200);
+        }
+
+        startButton.onclick = () => {
+            const inputValue = input.value
+            strsplit(inputValue)
+        }   
+    </script> -->
+
+    <!-- 7.1 part2 my answer -->
+    <!-- <input class="strInput" />
+    <button class="start">Start</button>
+    <h1 class="display"></h1>
+    <div class="container"></div>
+
+    <script>
+        const strInput = document.querySelector('.strInput')
+        const startButton = document.querySelector('.start')
+        const display = document.querySelector('.display')
+        const container = document.querySelector('.container')
+
+        const displayStr = (str, i = 0, result = "") => {
+            //全部遍历完之后，其实是把display清零，然后用container显示一个整合的数据
+            if (i === str.length) {
+                display.innerText = ''
+                container.innerHTML = `<h1>${str}</h1>${container.innerHTML}`
+                return
+            }
+            setTimeout(() => {
+                const newResult = `${result}${str[i]}`
+                display.innerText = newResult
+                displayStr(str, i + 1, newResult)
+            }, 200)
+        }
+
+        startButton.onclick = () => {
+            displayStr(strInput.value)
+            strInput.value = ''
+        }
+    </script> -->
+
+    <!-- exercise 8 有点难 -->
+    <!-- //总结：函数递归的时间间隔是10ms（10ms = 1 hunseconds）
+    //所以222hunseconds（2220ms）是2second + 22hunseconds；
+    // 1099hunseconds（10990ms）是10second + 99hunseconds；
+
+    //这句话
+    //display.innerText = `${frontZeroSeconds}${seconds}:${frontZeroHunSeconds}${hunSeconds}`
+    //只有seconds 和hunseconds < 10
+        的时候（seconds和hunSeconds其实是一位数，要补一个‘0’）；${frontZeroSeconds}和{frontZeroHunSeconds}才会显示0；否则则为空值，显示大于等于两位数的seconds和hunSeconds；
+        //开场显示时间归零：00（秒）：00（hunseconds）；  -->
+    <!-- <h1 class="display">00:00</h1>
+        <button class="start">Start</button>
+
+        <script>
+            const display = document.querySelector('.display')
+            const startButton = document.querySelector('.start')
+
+            let isRunning = false
+            let counter = 0
+
+            const runCounter = () => {
+                if (!isRunning) return
+
+                setTimeout(() => {
+                    counter = counter + 1
+                    const seconds = Math.floor(counter / 100)
+                    const hunSeconds = counter % 100
+
+                    let frontZeroSeconds = ''
+                    if (seconds < 10) {
+                        frontZeroSeconds = '0'
+                    }
+
+                    let frontZeroHunSeconds = ''
+                    if (hunSeconds < 10) {
+                        frontZeroHunSeconds = '0'
+                    }
+
+                    display.innerText = `${frontZeroSeconds}${seconds}:${frontZeroHunSeconds}${hunSeconds}`
+                    runCounter()
+                }, 10)
+            }
+
+            startButton.onclick = () => {
+                counter = 0
+                if (isRunning) {
+                    // Already running.
+                    //     If we don't return, then we will start adding
+                    //     more and more setTimeouts.
+                    return
+                }
+                isRunning = true
+                runCounter()
+            }
+
+        </script> -->
+
+    <!-- exercise 9  -->
+    <!-- 总结：通过一个helper变量，改变显示内容，一次显示空值‘ ’， 一次显示输入的数字。递归循环，没有终止条件 -->
+    <!-- <input type="text" class="str">
+    <input type="text" class="number">Times per second
+
+    <p class="display"></p>
+
+    <script>
+        const str = document.querySelector('.str')
+        const time = document.querySelector('.number')
+        const display = document.querySelector('.display')
+
+        // 在函数里和外面，区别不大，都是不可重新赋值的默认值
+        const defaultStr = "Welcome to challenge 9!"
+        const defaultTimes = 3
+
+        let shouldHide = false
+
+        const startAPP = () => {
+
+            text = str.value || defaultStr
+
+            if (shouldHide) {
+                text = ''
+            }
+            display.innerText = text
+            shouldHide = !shouldHide
+
+            const times = +time.value || defaultTimes
+
+            setTimeout(startAPP, 1000 / times);
+        }
+
+        startAPP()
+
+    </script> -->
+
+</body>
+
+</html>

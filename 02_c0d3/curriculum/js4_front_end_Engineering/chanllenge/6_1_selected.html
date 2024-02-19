@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .body {
+            margin: 0px;
+            padding: 0px;
+        }
+
+        .container {
+
+            margin: 50px auto;
+
+
+        }
+
+        .block {
+            display: inline-block;
+            box-sizing: border-box;
+            background-color: #eee;
+            border: 1px solid black;
+            pointer-events: none;
+            /* vertical-align: middle; */
+        }
+
+        .blockSelected {
+            background-color: #000
+        }
+
+        .selected {
+            position: fixed;
+            display: none;
+            background-color: rgba(0, 0, 0, 0.5);
+            pointer-events: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+
+        <div class="selected"></div>
+    </div>
+
+    <script>
+        const blockNum = 5;
+        const blockWidth = 50;
+        const marginWidth = 10;
+        const blockList = []
+
+        const container = document.querySelector('.container')
+        const selected = document.querySelector('.selected')
+
+        let flag = false
+
+
+        const isCovered = (left, right, top, bottom, r = 0, c = 0) => {
+            if (r === blockNum) return
+            if (c === blockNum) return isCovered(left, right, top, bottom, r + 1, c = 0)
+            if (blockList[r][c].covered(left, right, top, bottom)) {
+
+                blockList[r][c].element.classList.add('blockSelected')
+            }
+            return isCovered(left, right, top, bottom, r, c + 1)
+        }
+
+        //build block, put the position here
+        function Block(r, c) {
+            this.element = document.createElement('div')
+            this.element.classList.add('block')
+            this.element.style.width = `${blockWidth}px`
+            this.element.style.height = `${blockWidth}px`
+            this.element.style.margin = `${marginWidth}px`
+
+            container.append(this.element)
+            this.position = this.element.getBoundingClientRect()
+
+            this.covered = (left, right, top, bottom) => {
+                if (
+                    this.position.left > left &&
+                    this.position.right < right &&
+                    this.position.top > top &&
+                    this.position.bottom < bottom
+                ) { return true }
+                return false
+            }
+        }
+
+        let mouseleft = ''
+        let mousetop = ''
+
+        //click
+        container.onmousedown = (e) => {
+            flag = true
+            mouseleft = e.clientX
+            mousetop = e.clientY
+
+            const cacheBlocks = document.querySelectorAll('.blockSelected')
+
+            if (cacheBlocks.length) {
+                console.log(cacheBlocks)
+                cacheBlocks.forEach((e) => {
+                    e.className = 'block'
+                })
+
+            }
+
+        }
+
+        container.onmousemove = (e) => {
+            if (!flag) return
+            selected.style.display = 'block'
+
+            const mouseleftM = e.clientX
+            const mousetopM = e.clientY
+
+            if (mouseleftM > mouseleft) {
+                selected.style.left = `${mouseleft}px`
+                selected.style.width = `${mouseleftM - mouseleft}px`
+            } else {
+                selected.style.left = `${mouseleftM}px`
+                selected.style.width = `${mouseleft - mouseleftM}px`
+            }
+
+            if (mousetopM > mousetop) {
+                selected.style.top = `${mousetop}px`
+                selected.style.height = `${mousetopM - mousetop}px`
+            } else {
+                selected.style.top = `${mousetopM}px`
+                selected.style.height = `${mousetop - mousetopM}px`
+            }
+
+            const selTop = +selected.style.top.split('px')[0]
+            const selLeft = +selected.style.left.split('px')[0]
+            const selRight = +selected.style.width.split('px')[0] + selLeft
+            const selBottom = +selected.style.height.split('px')[0] + selTop
+
+            // console.log(selLeft, selRight, selTop, selBottom)
+            isCovered(selLeft, selRight, selTop, selBottom)
+
+        }
+
+        container.onmouseup = (e) => {
+            flag = false
+            selected.style.display = 'none'
+            selected.style.left = '0px'
+            selected.style.width = '0px'
+            selected.style.top = '0px'
+            selected.style.height = '0px'
+
+            mouseleft = ''
+            mousetop = ''
+
+
+        }
+
+        container.onmouseleave = (e) => {
+            flag = false
+            selected.style.display = 'none'
+            selected.style.left = '0px'
+            selected.style.width = '0px'
+            selected.style.top = '0px'
+            selected.style.height = '0px'
+
+            mouseleft = ''
+            mousetop = ''
+
+
+        }
+
+
+
+        const buildBlockList = (require, r = 0, c = 0, store = []) => {
+            if (r >= require) return
+            if (c >= require) {
+                blockList.push(store)
+                return buildBlockList(require, r + 1, c = 0, store = [])
+            }
+            store.push(new Block(r, c))
+            return buildBlockList(require, r, c + 1, store)
+        }
+
+        const setGame = () => {
+            container.style.width = `${(blockWidth + marginWidth * 2) * (blockNum)}px`
+            container.style.height = `${(blockWidth + marginWidth * 2) * (blockNum)}px`
+            buildBlockList(blockNum)
+        }
+
+        setGame()
+        console.log(blockList)
+
+    </script>
+</body>
+
+</html>

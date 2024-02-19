@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <style>
+        body {
+            overflow: hidden;
+        }
+
+        .small {
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        .container {
+            position: absolute;
+            bottom: 0px;
+            right: 0px;
+        }
+
+        .mouse {
+            position: absolute;
+            top: 0px;
+            left: 0px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="small"><img src="https://songz.c0d3.com/js4/exercises/300x225.jpeg" class="smallImage">
+        <h3 class="test">coordinator</h3>
+    </div>
+
+
+    <div class="container">
+        <img src="https://songz.c0d3.com/js4/exercises/800x600.jpeg" class="largeImage">
+        <img src="https://songz.c0d3.com/js4/exercises/arrow.png" class="mouse">
+    </div>
+
+    <script>
+        const smallImage = document.querySelector('.smallImage')
+        const test = document.querySelector('.test')
+        const mouse = document.querySelector('.mouse')
+
+
+        smallImage.addEventListener('mousemove', (e) => {
+            const x = e.clientX
+            const y = e.clientY
+            test.innerText = `${x},${y}`
+
+            mouse.style.top = `${8 / 3 * y}px`
+            mouse.style.left = `${8 / 3 * x}px`
+
+
+
+        })
+    </script>
+
+</body>
+
+</html>

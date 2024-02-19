@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kanban Board</title>
+    <style>
+        body {
+            display: flex;
+            /* margin: 30px 0 0 0; */
+        }
+
+        .todoListContainer {
+            margin-top: 30px;
+            margin-left: 30px;
+            width: 25%;
+        }
+
+        .todoListContainer:last-of-type {
+            margin-right: 30px;
+        }
+
+        .title {
+            text-align: center;
+            padding: 10px;
+            color: #fff;
+        }
+
+        .todoContainer {
+            display: flex;
+            justify-content: stretch;
+            width: 100%;
+            margin-bottom: 5px;
+            background-color: #eee;
+
+        }
+
+        .todoContainer .left,
+        .todoContainer .right {
+            /* display: inline-block; */
+            /* height: 100%; */
+            margin: 10px;
+            align-self: center;
+            cursor: pointer;
+        }
+
+        .todoContainer .center {
+            margin: 10px 0;
+            width: 100%;
+        }
+
+
+        .inputContainer {
+            display: flex;
+        }
+
+        textarea {
+            width: 100%;
+        }
+
+        .unDo {
+            position: fixed;
+            bottom: 0px;
+            right: 0px;
+            padding: 20px;
+
+        }
+    </style>
+</head>
+
+<body>
+    <div class="todoListContainer"></div>
+    <div class="todoListContainer">2</div>
+    <div class="todoListContainer">3</div>
+    <div class="todoListContainer">4</div>
+    <button class="unDo">Undo</button>
+
+    <script>
+        //其实是怎么处理一个2d array数据的交换，从[r1][c1]换到[r2][c2]
+        // 并有一个列表保存之前的每一步，方便撤销
+
+        const initial = [
+            { title: 'To-Do', color: '#35235D', todos: [] },
+            { title: 'Doing', color: '#CB2402', todos: [] },
+            { title: 'Done', color: '#4C49A2', todos: [] },
+            { title: 'Approved', color: '#A31A48', todos: [] }
+        ]
+        const unDoList = []
+        const unDobtn = document.querySelector('.unDo')
+
+        const render = (i) => {
+            const container = document.querySelectorAll('.todoListContainer')[i]
+            const item = data[i]
+
+            const left = i === 0 ? '' : '&lt;'
+            const right = i === data.length - 1 ? '' : '&gt;'
+
+            const todos = item.todos.reduce((acc, todo, idx) => {
+                return acc + `
+                    <div class = "todoContainer" >
+                        <div class="swap left clickable" data-id="${i}" data-index="${idx}">${left}</div>
+                        <div class="center clickable" data-id="${i}" data-index="${idx}">${todo}</div>
+                        <div class="swap right clickable" data-id="${i}" data-index="${idx}">${right}</div>
+                    </div>
+                        `}, '')
+
+
+            container.innerHTML = `
+                <div class="title" 
+                style="background: ${item.color}">${item.title}</div>
+                ${todos}
+                <div class="inputContainer">
+                    <textarea id="input-${i}" rows="5"></textarea>
+                    <button data-id="${i}" class="submit">Submit</button>
+                </div>
+            `
+            container.onclick = (e) => {
+                const targetClass = e.target.classList
+                if (!targetClass.contains('clickable') && !targetClass.contains('submit')) return
+
+                //they can differ later on if the DOM is manipulated or if items are added, removed, or moved within the lists.
+                //make sure it returns num! with '+'
+                const listId = +e.target.dataset.id
+
+                //submit
+                if (targetClass.contains('submit')) {
+                    const inputElement = document.querySelector(`#input-${listId}`)
+                    const value = inputElement.value
+                    if (!value.length) return
+                    const newId = takeAction('add', { listId, value })
+                    unDoList.push({ action: 'delete', info: { listId, todoId: newId - 1 } })
+                }
+
+                //delete 
+                const todoId = e.target.dataset.index
+                if (targetClass.contains('center')) {
+                    if (!confirm(`Are you sure you want to remove ${data[listId].todos[todoId]}?`)) return
+                    const newId = takeAction('delete', { listId, todoId })
+                    unDoList.push({ action: 'add', info: { listId, value: newId } })
+                }
+
+                //当前的element添加到目标list最后一位，
+                // 从目标最后一位删除，放回原来位置，
+                //所以要储存原来位置的index
+                if (targetClass.contains('swap')) {
+                    const newListIndex = targetClass.contains('left') ? listId - 1 : listId + 1
+                    const newtodoId = takeAction('swap', { listId, newListIndex, todoId, newtodoId: data[newListIndex].todos.length })
+                    unDoList.push({
+                        action: 'swap', info: {
+                            listId: newListIndex,
+                            newListIndex: listId,
+                            todoId: newtodoId, //
+                            newtodoId: todoId //
+                            //互换，
+
+                        }
+                    })
+
+                }
+            }
+
+        }
+
+        const takeAction = (action, info) => {
+            const selectedList = data[info.listId].todos
+            let result = ''
+
+            switch (action) {
+                case 'add':
+                    result = selectedList.push(info.value)
+                    break
+                case 'delete':
+                    result = selectedList.splice(info.todoId, 1)[0]
+                    break
+                case 'swap':
+                    const oldItem = selectedList.splice(info.todoId, 1)[0]
+                    const listB = data[info.newListIndex].todos
+                    listB.splice(info.newtodoId, 0, oldItem)
+                    result = listB.length - 1
+                    render(info.newListIndex) //render swapped list
+                    break
+
+
+            }
+            render(info.listId) //render the updated container
+            localStorage.setItem('kanban', JSON.stringify(data))
+            return result
+        }
+
+        unDobtn.onclick = () => {
+            const todo = unDoList.pop()
+            if (!todo) return
+            takeAction(todo.action, todo.info)
+            localStorage.setItem('kanban', JSON.stringify(data))
+        }
+
+        const localData = localStorage.getItem('kanban')
+        const data = localData && localData.length > 5 ? JSON.parse(localData) : initial
+        console.log(data)
+        data.forEach((e, i) => {
+            render(i)
+        })
+    </script>
+</body>
+
+</html>

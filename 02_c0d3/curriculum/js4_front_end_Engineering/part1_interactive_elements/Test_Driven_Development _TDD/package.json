@@ -1,0 +1,12 @@
+{
+  "name": "test_driven_development-_tdd",
+  "version": "1.0.0",
+  "description": "",
+  "main": "00_createFile.js",
+  "scripts": {
+    "test": "jest --watchAll"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

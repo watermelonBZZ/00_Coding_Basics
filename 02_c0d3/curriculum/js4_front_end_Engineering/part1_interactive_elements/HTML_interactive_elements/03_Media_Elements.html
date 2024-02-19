@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <!-- Build an audio hover player -->
+    <!-- <input type="text" class="musicLink">
+    <audio src="" class="music"></audio>
+    <h1 class="display"></h1>
+    <script>
+        const musicLink = document.querySelector('.musicLink')
+        const music = document.querySelector('.music')
+        const display = document.querySelector('.display')
+
+        musicLink.addEventListener('keyup', (e) => {
+            if (e !== '' && e.key === 'Enter') {
+                music.src = `${musicLink.value}`
+                display.innerText = 'Playing...'
+                music.play()
+
+                display.addEventListener('mouseenter', () => {
+                    music.play()
+                    display.innerText = 'Playing...'
+                })
+
+                display.addEventListener('mouseleave', () => {
+                    music.pause()
+                    display.innerText = 'Paused...'
+                })
+            }
+        })
+    </script> -->
+
+    <!-- Build an audio hover player -->
+    <!-- <input type="text" class="musicLink">
+    <audio src="" class="music"></audio>
+    <h1 class="display"></h1>
+
+    <script>
+        let isStarted = false
+        const musicLink = document.querySelector('.musicLink')
+        const music = document.querySelector('.music')
+        const display = document.querySelector('.display')
+
+        music.addEventListener('timeupdate', () => {
+            let seconds = Math.floor(music.currentTime) //返回秒数，但是要把小数点后面的毫秒floor掉
+            let min = Math.floor(seconds / 60) //分钟
+            seconds = seconds % 60 //剩下的秒数余数
+            seconds = `${seconds}` //变成字符串
+            if (seconds.length < 2) {
+                seconds = `0${seconds}`
+            }//小于两位数的秒数，前面 +0
+            display.innerText = `${min}:${seconds}`
+        })
+
+
+        musicLink.addEventListener('keyup', (e) => {
+            if (e.key === 'Enter') {
+                music.src = `${musicLink.value}`
+                music.play()
+                displayElement.innerText = '00:00'//播放显示00：00
+                isStarted = true
+
+
+                display.addEventListener('mouseenter', () => {
+                    if (!isStarted) return
+                    music.play()
+                })
+
+                display.addEventListener('mouseleave', () => {
+                    if (!isStarted) return
+                    music.pause()
+                    display.innerText = 'Paused...'
+                })
+            }
+        })
+    </script> -->
+
+    <!-- Build a hover-to-play video -->
+    <!-- <div><button class="startBtn">start</button></div>
+    <h1 class="textDisplay"></h1>
+    <video src="" class="video"></video>
+
+
+    <script>
+        const startBtn = document.querySelector(".startBtn")
+        const video = document.querySelector(".video")
+        const textDisplay = document.querySelector(".textDisplay")
+
+        startBtn.addEventListener('click', () => {
+            video.src = 'https://songz.c0d3.com/js4/examples/ankurBunny.mp4'
+            startBtn.remove()
+            video.addEventListener('mouseenter', () => {
+                video.play()
+                video.addEventListener('timeupdate', () => {
+                    let seconds = Math.floor(video.currentTime)
+                    let min = Math.floor(seconds / 60)
+                    seconds = seconds % 60
+                    seconds = `${seconds}`
+                    if (seconds.length < 2) {
+                        seconds = `0${seconds}`
+                    }
+                    textDisplay.innerText = `${min}:${seconds}`
+                })
+
+
+            })
+        })
+        video.addEventListener('mouseleave', () => {
+            video.pause()
+        })
+    </script> -->
+
+    <!-- Exploding text -->
+    <!-- <input type="text" class="input">
+    <canvas class="canvas"></canvas>
+
+    <script>
+        const input = document.querySelector('.input')
+        const canvas = document.querySelector('.canvas')
+        const ctx = canvas.getContext('2d')
+
+        canvas.width = 800
+        canvas.height = 200
+        //canvas 颜色
+        ctx.fillStyle = "#000000" //color
+        ctx.fillRect(0, 0, canvas.width, canvas.height)
+        let array = []
+        input.addEventListener('keyup', (e) => {
+
+            if (e.key === 'Enter') {
+                const str = input.value
+                array = str.split('')
+                input.value = ''
+
+                //！这里要刷新一下！
+                ctx.fillStyle = "#000000" //color
+                ctx.fillRect(0, 0, canvas.width, canvas.height)
+
+                //不可以放在if外面，放在外面就是if不生效时，才会explode这些str
+                ctx.font = "30px Comic Sans MS"
+                ctx.fillStyle = "white"
+                array.forEach(e => {
+                    const x = Math.floor(Math.random() * 600)
+                    const y = Math.floor(Math.random() * 200)
+                    return ctx.fillText(`${e}`, x, y)
+                });
+            }
+
+
+        })
+
+    </script> -->
+
+    <!-- marked.parse -->
+    <!-- <textarea class="input" name="" cols="30" rows="10"></textarea>
+    <div class="display"></div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    
+    <script>
+      const ip = document.querySelector('.input')
+      const display = document.querySelector('.display')
+    
+      ip.focus()
+    
+      ip.addEventListener('keyup', () => {
+        display.innerHTML = marked.parse( ip.value )
+      })
+    </script> -->
+
+    <!-- accent reader  -->
+    <textarea class="input" cols="30" rows="10"></textarea>
+    <select class="accentList"></select>
+
+
+    <script src="https://code.responsivevoice.org/responsivevoice.js?key=aJxkdtff"></script>
+
+    <script>
+        const input = document.querySelector('.input')
+        const accentList = document.querySelector('.accentList')
+        const display = document.querySelector('.display')
+
+
+        // input.focus()
+        // accentList.focus()
+        const accentChoice = responsiveVoice.getVoices();
+        // responsiveVoice.setDefaultVoice("UK English Female");
+
+        accentList.innerHTML = accentChoice.reduce((acc, e) => {
+            return acc + `<option value="${e.name}">${e.name}</option>`
+        }, '')
+
+        accentList.addEventListener('change', () => {
+            const accentSelected = accentList.value
+            responsiveVoice.speak(input.value, accentSelected)
+        })
+
+    </script>
+
+
+
+
+
+
+
+
+</body>
+
+</html>

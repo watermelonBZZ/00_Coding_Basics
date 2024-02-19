@@ -1,0 +1,51 @@
+.container {
+    width: 850px;
+    margin: auto;
+  }
+
+  .backgroundContainer {
+    height: 365px;
+    border: 1px solid rgba(100,100,100, 0.5);
+    position: relative;
+  }
+
+.bgcimg{
+    background: url(https://placekitten.com/850/320);
+    filter: blur(2px);
+    height: 320px;
+    background-size: cover;
+}
+
+.profileImage{
+    height: 168px;
+    width:168px;
+    border-radius: 50%;
+    /* background-size: cover; */
+    background-image: url(https://placekitten.com/168/168);
+
+    position: absolute;
+    bottom: 15px;
+    left: 15px;
+
+    box-sizing: border-box;
+    border: 5px solid white;
+}
+
+.name{
+    position: absolute;
+    bottom: 30px;
+    left: 200px;
+    font-size: 50px;
+    color: rgba(255,255,255,1);
+}
+
+.nav{
+    margin-left: 183px;
+    display: flex;
+    justify-content: space-around;
+    font-size: 25px;
+    padding-top: 7px;
+    cursor: pointer;
+
+}
+

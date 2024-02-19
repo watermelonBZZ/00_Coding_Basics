@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <style>
+        .body {
+            box-sizing: border-box;
+        }
+
+        .videoContainer {
+            width: 100%;
+            /* height: 100px; */
+            background-color: rgba(20, 40, 50, 1);
+            text-align: center;
+
+            position: fixed;
+            top: 0px;
+            left: 0;
+        }
+
+        .video {
+            height: 400px;
+        }
+
+        .videoCaption {
+            position: absolute;
+            top: 10px;
+
+            color: white;
+            background: rgba(20, 40, 50, 0.3);
+
+            width: 100%;
+            padding: 10px;
+            font-size: 30px;
+
+
+
+            z-index: 2;
+
+        }
+
+        .inputContainer {
+            width: 600px;
+            margin: 430px auto 20px auto
+        }
+
+        .captionInput {
+            width: 300px;
+        }
+
+        .captionEle {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .captionEle_text {
+            width: 100%;
+        }
+
+        .control {
+            width: 100px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="videoContainer">
+        <video class="video" src="https://songz.c0d3.com/js4/exercises/pubDomainRemix.mp4" controls></video>
+        <div class="videoCaption">captionsDefault</div>
+    </div>
+
+    <div class="inputContainer">
+        <h3>Add Caption</h3>
+        <input type="text" placeholder="Caption" class="captionInput">
+        <input type="text" placeholder="Start(ms)" class="startInput">
+        <input type="text" placeholder="End(ms)" class="endInput">
+        <button class="submit">Save</button>
+        <hr>
+
+        <!-- captionListDisplayBox -->
+        <div class="captionListDisplay">
+            <div class="captionEle">captionListElements</div>
+        </div>
+        <div class="test">curMS</div>
+
+    </div>
+
+
+
+    <script>
+
+        // captionListDisplayBox
+        const captionListDisplay = document.querySelector('.captionListDisplay')
+        let captions = [
+            {
+                text: 'A beautiful Typewriter',
+                start: 0,
+                end: 3000
+            },
+
+            {
+                text: 'On to a big piece of paper',
+                start: 3000,
+                end: 7000
+            },
+
+            {
+                text: 'Transitioning to Video!',
+                start: 7000,
+                end: 8000
+            },
+
+            {
+                text: 'Video of horse, then magazine',
+                start: 7000,
+                end: 8000
+            }
+        ]
+
+        //func of rendering captionList
+        //展示全部的caption（包括默认的和用户输入的） 
+        const render = () => {
+            //set content of captionListDisplayBox
+            captionListDisplay.innerHTML = captions.reduce((acc, e) => {
+                return acc + `
+            <div class = "captionEle">
+            <h5 class = "captionEle_text">${e.text}</h5>
+            <p class = "captionEle_start control">${e.start}</p>
+            <p class = "captionEle_end control">${e.end}</p>
+            </div>
+            `
+            }, '')
+
+            //set clickon 
+            const captionEles = document.querySelectorAll('.captionEle')
+            captionEles.forEach((e, i) => {
+                e.addEventListener('click', () => {
+                    if (confirm(`Remove caption: ${captions[i].text}?`)) {
+                        captions.splice(i, 1)
+                        return render()
+                    }
+                })
+            })
+        }
+        render()
+
+        //video timeupdate, update validCaption
+        //主要视频在播放，时间条在动，这个函数就会跑，来更新有效validCaption
+        const test = document.querySelector('.test')
+        const video = document.querySelector('.video')
+
+        video.addEventListener('timeupdate', () => {
+            const curMS = video.currentTime * 1000
+
+
+            const captionsAfterCurrent = captions.filter((e) => {
+                return e.start <= curMS
+            })
+
+            const validCaption = captionsAfterCurrent.filter((e) => {
+                return e.end > curMS
+            })
+
+            const videoCaption = document.querySelector('.videoCaption')
+
+            let captionText = ''
+            if (validCaption.length) {
+                captionText = validCaption[0].text
+            }
+
+            videoCaption.innerText = captionText
+
+            test.innerText = `${validCaption} +${curMS}`
+
+
+
+        })
+
+        //add caption
+        const submitButton = document.querySelector('.submit')
+        const captionInput = document.querySelector('.captionInput')
+        const startInput = document.querySelector('.startInput')
+        const endInput = document.querySelector('.endInput')
+
+
+
+        submitButton.addEventListener('click', () => {
+            const captionTxt = captionInput.value
+            if (captionTxt.length < 3) {
+                return
+            }
+            const startTime = +startInput.value
+            const endTime = +endInput.value
+
+            if (!Number.isInteger(startTime) || !Number.isInteger(endTime)) {
+                return
+            }
+
+            captions.push({
+                text: captionTxt,
+                start: startTime,
+                end: endTime
+            })
+            render()
+        })
+    </script>
+
+</body>
+
+</html>

@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Selection Box</title>
+
+    <style>
+        #container {
+            width: 250px;
+            /* 50px per box * 5 boxes */
+        }
+
+        .box {
+            width: 50px;
+            height: 50px;
+            background-color: white;
+            border: 1px solid black;
+            float: left;
+        }
+
+        .selected {
+            background-color: blue;
+        }
+
+        .overlay {
+            position: absolute;
+            background-color: rgba(128, 128, 128, 0.5);
+            /* z-index: 1; */
+        }
+    </style>
+</head>
+
+<body>
+    <div id="container"></div>
+    <script>
+        class Box {
+            constructor(id) {
+                this.id = id;
+                this.element = document.createElement('div');
+                this.element.className = 'box';
+                this.element.id = id;
+                this.element.addEventListener('mousedown', () => this.select());
+                document.getElementById('container').appendChild(this.element);
+            }
+
+            select() {
+                this.element.classList.toggle('selected');
+            }
+        }
+
+        const n = 5;
+        const boxes = [];
+        for (let i = 0; i < n * n; i++) {
+            boxes.push(new Box(i));
+        }
+
+        let isDragging = false;
+        let startBoxId;
+
+        document.addEventListener('mousedown', (e) => {
+            isDragging = true;
+            startBoxId = e.target.id;
+            // Unselect all previously selected boxes
+            document.querySelectorAll('.box.selected').forEach(box => {
+                box.classList.remove('selected');
+            });
+        });
+
+        document.addEventListener('mousemove', (e) => {
+            if (isDragging) {
+                const endBoxId = e.target.id;
+                const startBox = document.getElementById(startBoxId);
+                const startX = startBox.offsetLeft;
+                const startY = startBox.offsetTop;
+                const endX = e.clientX;
+                const endY = e.clientY;
+
+                // Calculate the range of the diagonal rectangle
+                const minX = Math.min(startX, endX);
+                const minY = Math.min(startY, endY);
+                const maxX = Math.max(startX, endX);
+                const maxY = Math.max(startY, endY);
+
+                // Select only the boxes within the range of the diagonal rectangle
+                document.querySelectorAll('.box').forEach(box => {
+                    const boxRect = box.getBoundingClientRect();
+                    if (
+                        boxRect.left >= minX && boxRect.right <= maxX &&
+                        boxRect.top >= minY && boxRect.bottom <= maxY
+                    ) {
+                        box.classList.add('selected');
+                    }
+                });
+                const previousOverlay = document.querySelector('.overlay');
+                if (previousOverlay) {
+                    previousOverlay.remove();
+                }
+
+
+
+                const overlay = document.createElement('div');
+                overlay.className = 'overlay';
+                overlay.style.left = Math.min(startBox.offsetLeft, e.clientX) + 'px';
+                overlay.style.top = Math.min(startBox.offsetTop, e.clientY) + 'px';
+                overlay.style.width = Math.abs(startBox.offsetLeft - e.clientX) + 'px';
+                overlay.style.height = Math.abs(startBox.offsetTop - e.clientY) + 'px';
+                document.body.appendChild(overlay);
+            }
+        });
+
+        document.addEventListener('mouseup', () => {
+            isDragging = false;
+            const overlays = document.getElementsByClassName('overlay');
+            while (overlays[0]) {
+                overlays[0].parentNode.removeChild(overlays[0]);
+            }
+        });
+    </script>
+</body>
+
+</html>

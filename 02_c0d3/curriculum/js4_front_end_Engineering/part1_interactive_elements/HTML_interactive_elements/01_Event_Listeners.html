@@ -1,0 +1,107 @@
+<!-- ex1_mousePostion -->
+
+<h1 class="mainTitle"> Hello</h1>
+<script>
+    const title = document.querySelector('.mainTitle')
+    const originalText = title.innerHTML;
+
+    title.addEventListener('mousemove', (e) => {
+        // To see other properties this object has, console.log(e) and explore!
+
+        title.innerHTML = `x: ${e.clientX}, y: ${e.clientY}`
+
+    })
+
+    title.addEventListener('mouseleave', (e) => {
+        title.innerHTML = originalText
+
+    })
+</script>
+<hr>
+<!-- ex2_typewriter -->
+
+<input type="text" class="input1">
+<div class="display1">diaplya</div>
+
+
+<script>
+    const input = document.querySelector('.input1')
+    const display1 = document.querySelector('.display1')
+
+    const renderValues = () => {
+        display1.innerHTML = userInputValues.reduce((acc, e) => {
+            return acc + `<h2>${e}</h2>`
+        }, '')
+    }
+
+    const userInputValues = []
+    input.addEventListener('keyup', (e) => {
+        if (e.key === 'Enter') {
+            const value = input.value
+            userInputValues.unshift(value)
+            renderValues()
+            input.value = ''
+        }
+    })
+
+
+
+</script>
+
+<hr>
+
+<!-- ex4_Build a text hiding tool  -->
+
+<input type="text" id="input4"> hiding tool
+<p class="currentLine"></p>
+<div class="display4"></div>
+
+<script>
+    const input4 = document.querySelector('#input4')
+    const display4 = document.querySelector('.display4')
+    const currentLine = document.querySelector('.currentLine')
+
+    const getXStr = (total, result = '') => {
+        if (total <= 0) {
+            return result
+        }
+        return getXStr(total - 1, result + 'X')
+    }
+
+    const render4 = () => {
+        const keys4 = Object.keys(kvPair4)
+        console.log(keys4);
+        display4.innerHTML = keys4.reduce((acc, e, i) => {
+            return acc + `<h2 class = 'value4Random' id ='${i}' >${kvPair4[e]}</h2>`
+        }, '')
+
+        const values4Random = document.querySelectorAll('.value4Random')
+        values4Random.forEach((el) => {
+            el.addEventListener('mouseenter', () => {
+                const idNum = el.id
+                el.innerHTML = keys4[idNum]
+            })
+
+            el.addEventListener('mouseleave', () => {
+                const idNum = el.id
+                el.innerHTML = kvPair4[keys4[idNum]]
+            })
+        })
+
+    }
+
+    const kvPair4 = {}
+    const keys4 = []
+    input4.addEventListener('keyup', (e) => {
+        if (e.key === 'Enter' && input4.value !== '') {
+            const value4 = input4.value
+            kvPair4[value4] = Math.random()
+            render4()
+            input4.value = ''
+        }
+        currentLine.innerText = getXStr(input4.value.length)
+    })
+
+
+
+</script>

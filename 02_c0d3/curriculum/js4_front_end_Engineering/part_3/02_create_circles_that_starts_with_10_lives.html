@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .screen {
+            position: fixed;
+            top: 0px;
+            bottom: 0px;
+            left: 0px;
+            right: 0px;
+
+            background-color: rgba(200, 255, 255, 1);
+        }
+
+        .circle {
+            border-radius: 50%;
+            width: 100px;
+            height: 100px;
+            border: 2px rgba(0, 0, 0, 1) solid;
+            background: rgba(0, 255, 255, 1);
+            position: fixed;
+            text-align: center;
+            padding-top: 25px;
+            font-size: 30px;
+            box-sizing: border-box;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="screen"></div>
+
+
+    <script>
+        const main = document.querySelector('.screen')
+
+        function Circle(clientX, clientY) {
+
+            let x = clientX - 50 // 不能忘记keyword let，不然就是 global 变量，每次创造新的circle都会让之前的xy刷新成新的。
+            let y = clientY - 50 // 也不能设置成const，因为后面是要修改的
+            let life = 3
+            const element = document.createElement('div')
+            element.classList.add('circle')
+            element.style.top = `${y}px`
+            element.style.left = `${x}px`
+            element.innerText = life
+            main.append(element)
+
+            element.addEventListener('click', (e) => {
+                life = life - 1
+                if (life < 1) {
+                    element.remove()
+                    e.stopPropagation()
+                    return
+
+
+                }
+                element.innerText = life
+                e.stopPropagation() //阻止事件冒泡到父元素的eventlistener
+
+            })
+
+
+        }
+
+        main.addEventListener('click', (e) => {
+            new Circle(e.clientX, e.clientY)
+        })
+    </script>
+
+</body>
+
+</html>

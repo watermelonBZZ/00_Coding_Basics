@@ -1,0 +1,53 @@
+<h1>TODO LIST</h1>
+
+
+
+<input type="text" class="textBox" />
+<button class="add">Add</button>
+<div class="display"></div>
+
+<script>
+    const addButton = document.querySelector(".add")
+    const textBox = document.querySelector(".textBox")
+    const display = document.querySelector(".display")
+
+
+    //获得本地数据（JSON），然后转换为js数据
+    const localData = localStorage.getItem('mydata') || '[]'
+    const data = JSON.parse(localData)
+
+
+
+    const render = () => {
+
+        //把传入的data转换为JSON数据， 然后储存在本地
+        const newData = JSON.stringify(data)
+        localStorage.setItem('mydata', newData)
+
+
+        //点击add添加todo之后，先刷新display
+        //注意这里不能直接将data这个array给display，因为array里面的逗号也会被识别并渲染，所以要读取每一个元素，添加到一个新的array里（.reduce()适合）
+        display.innerHTML = data.reduce((acc, e) => { return acc + `<h2 class = 'todoElements'>${e}</h2>` }, '')
+
+        const todoElements = document.querySelectorAll('.todoElements')
+
+        //给每一个todo元素都绑一个onclick，触发后会从data这个array里删除这个todo元素，同时通过render()相应地更新display里面的元素内容、数量和index，并给与onclick
+        todoElements.forEach((e, i) => {
+            e.onclick = () => {
+                data.splice(i, 1)
+                render()
+            }
+
+        })
+    }
+
+    addButton.onclick = () => {
+        data.unshift(textBox.value)
+        render()
+    }
+
+    render()
+
+
+
+</script>

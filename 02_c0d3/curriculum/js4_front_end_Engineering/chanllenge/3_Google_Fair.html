@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Google Fair</title>
+    <style>
+        .container {
+            position: relative;
+            margin: 0px auto;
+            width: 421px;
+            height: 168px;
+            cursor: none;
+        }
+
+        .circleContainer {
+            display: none;
+            position: absolute;
+            pointer-events: none;
+            width: 200px;
+            height: 200px;
+            clip-path: circle(99px at center);
+            background-repeat: no-repeat;
+            background-image: url(https://www.c0d3.com/challenges/assets/fair/big.jpg);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <img src="https://www.c0d3.com/challenges/assets/fair/small.jpg" alt="" class="img">
+        <div class="circleContainer">
+            <img class="circle" src="https://www.c0d3.com/challenges/assets/fair/scope.png">
+        </div>
+    </div>
+
+    <script>
+        const container = document.querySelector('.container')
+        const circle = document.querySelector('.circle')
+        const circleContainer = document.querySelector('.circleContainer')
+
+        const ratioX = 1263 / 421;
+        const ratioY = 503 / 168;
+
+        container.addEventListener('mousemove', (e) => {
+            circleContainer.style.display = 'block'
+            const x = e.offsetX
+            const y = e.offsetY
+
+            circleContainer.style.top = `${y - 100}px`
+            circleContainer.style.left = `${x - 100}px`
+
+            const bgPosX = ((x * ratioX) - 100) * -1;
+            const bgPosY = ((y * ratioY) - 100) * -1;
+
+            circleContainer.style.backgroundPosition = `${bgPosX}px ${bgPosY}px`;
+        })
+
+        container.addEventListener('mouseout', () => {
+            circleContainer.style.display = 'none'
+        })
+    </script>
+</body>
+
+</html>

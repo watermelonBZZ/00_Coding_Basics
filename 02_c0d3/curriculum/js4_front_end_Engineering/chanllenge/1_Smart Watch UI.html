@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .img {
+            position: fixed;
+            bottom: 0px;
+            left: 0px;
+            background-image: url(https://www.c0d3.com/challenges/assets/watch.jpg);
+            height: 800px;
+            width: 655px;
+
+        }
+
+        /* setting the container size,position, shape and overflow */
+        .container {
+            position: relative;
+            width: 377px;
+            height: 377px;
+            border-radius: 50%;
+            margin-top: 208px;
+            margin-left: 132px;
+            /* background-color: #6f6f6f; */
+
+
+            overflow: hidden;
+
+        }
+
+        .timeDisplay {
+            position: absolute;
+            top: 50%;
+
+            width: 100%;
+            height: 100%;
+
+            cursor: pointer;
+            background-color: white;
+            text-align: center;
+            transition: top 0.5s linear;
+        }
+
+        .full {
+            top: 0;
+        }
+
+        h1 {
+            font-size: 5em;
+            margin-top: 30px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="img">
+        <div class="container">
+
+            <iframe
+                src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d4479.975633451447!2d10.745221983234634!3d59.911913170346935!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1szh-CN!2sus!4v1704600714018!5m2!1szh-CN!2sus"
+                width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy"
+                referrerpolicy="no-referrer-when-downgrade" class="map"></iframe>
+            <div class="timeDisplay">
+                <h1>
+                    <span class="hour">xx</span>
+                    :
+                    <span class="mintue">xx</span>
+                </h1>
+                <hr>
+
+                <h2 class="weekday">xx</h2>
+                <h2>
+                    <span class="month"></span>
+                    <span class="date"></span>
+                    ,
+                    <span class="year"></span>
+                </h2>
+
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        const timeDisplay = document.querySelector(
+            '.timeDisplay'
+        )
+        timeDisplay.onclick = () => {
+            timeDisplay.className = timeDisplay.className.includes('full') ? 'timeDisplay' : 'timeDisplay full'
+
+        }
+
+        const d = new Date()
+
+
+
+        const hour = document.querySelector('.hour')
+        const mintue = document.querySelector('.mintue')
+        const weekday = document.querySelector('.weekday')
+        const month = document.querySelector('.month')
+        const date = document.querySelector('.date')
+        const year = document.querySelector('.year')
+
+        hour.innerText = d.getHours() % 12 //12hr 
+
+        //check if the mintues 
+        const mintues = d.getMinutes() + ''
+        mintue.innerText = mintues.length < 2 ? `0${mintues}` : mintues;
+
+
+        weekday.innerText = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"][d.getDay()];
+        month.innerText = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"][d.getMonth()];
+        date.innerText = d.getDate()
+        year.innerText = d.getFullYear()
+
+
+    </script>
+
+</body>
+
+</html>

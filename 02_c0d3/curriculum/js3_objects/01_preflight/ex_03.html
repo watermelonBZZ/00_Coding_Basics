@@ -1,0 +1,116 @@
+<button class="prev">Previous</button>
+<button class="next">Next</button>
+<hr>
+<div class="display"></div>
+<hr>
+<textarea class="storyInput" cols="20" rows="3"></textarea>
+<button class="submit">Submit</button>
+
+<div class="storyList">
+    <!-- <h3 class="storyItem">I used to think the brain was the most important organ. Then I thought, look what’s telling me
+        that.</h3>
+
+    <h3 class="storyItem">A farmer in the field with his cows counted 196 of them, but when he rounded them up he had
+        200.</h3>
+
+    <h3 class="storyItem">What is Bruce Lee’s favorite drink? Wataaaaah!</h3>
+
+    <h3 class="storyItem"> If you want to catch a squirrel just climb a tree and act like a nut.</h3>
+
+    <h3 class="storyItem">A magician was walking down the street and turned into a grocery store.</h3> -->
+</div>
+
+
+<script>
+    const display = document.querySelector('.display')
+    const storyList = document.querySelector('.storyList')
+
+    //pre button
+    const prevButton = document.querySelector('.prev')
+    prevButton.onclick = () => {
+        i -= 1
+        if (i <= 0) i = 0
+        renderDisplay(i)
+    }
+
+    //next button 
+    const nextButton = document.querySelector('.next')
+    nextButton.onclick = () => {
+        i += 1
+        if (i >= data.length) i = data.length - 1
+        renderDisplay(i)
+    }
+
+    //submit button & input value 
+    const subButton = document.querySelector('.submit')
+    subButton.onclick = () => {
+        const newInput = document.querySelector('.storyInput').value
+        data.push(newInput)
+        renderStoryList()
+        newInput.value = ''
+
+    }
+    //初始设置
+    //读取本地储存信息，如果没有则是'[]'（因为JSON为字符串，所以这里空值也是）
+    const localdata = localStorage.getItem('story') || '[]'
+
+    //把读取的本地数据，转为js，array
+    let data = JSON.parse(localdata)
+
+    //如果是第一次打开这个页面，本地数据为空，则会data设为初始值
+    if (!data.length) {
+        data = [
+            'I used to think the brain was the most important organ. Then I thought, look what’s telling me that.',
+            'A farmer in the field with his cows counted 196 of them, but when he rounded them up he had 200.',
+            'What is Bruce Lee’s favorite drink? Wataaaaah!',
+            ' If you want to catch a squirrel just climb a tree and act like a nut.',
+            'A magician was walking down the street and turned into a grocery store.',
+        ]
+    }
+
+    //无论是第一次还是第几次打开页面，都显示data array 的第一个元素
+    let i = 0
+
+    //***如果在定义函数时，申明需要参数（i），且没有给默认值(i =0)，则在后面调用函数的时需要传入参数，否则，就会报错（这次是显示undefined）
+
+    //***这里就是给了i，但是后面写renderDisplay()，而不是renderDisplay(i)，就在页面显示了undefined
+    // const renderDisplay = (i) => {
+    // display.innerText = data[i] 
+    // }
+
+    //显示互动的div
+    const renderDisplay = () => {
+        return display.innerText = data[i] //加了return
+    }
+
+    //渲染储存的data（array）
+    const renderStoryList = () => {
+        // 更新（添加或者删除都要）data列表之后都要先更新本地localStorage
+        localStorage.setItem('story', JSON.stringify(data))
+
+        //渲染data数据（就是把data的elements全部添加到html里相对应的div里）
+        //***记得传入的function要写return，不然reduce的acc会一直是空值往下传
+        storyList.innerHTML = data.reduce(
+            (acc, e) => {
+                return acc + `<h3 class="storyItem">${e}</h3>`
+
+            }, ''
+        )
+
+        // 每个元素都会有一个onclick，点了之后是在data列表中删除该element，然后重新渲染展示块
+        const storyItems = document.querySelectorAll('.storyItem')
+        storyItems.forEach((e, i) => {
+            e.onclick = () => {
+                data.splice(i, 1)
+                renderStoryList()
+            }
+        })
+
+    }
+
+
+    renderDisplay()
+    renderStoryList()
+
+
+</script>

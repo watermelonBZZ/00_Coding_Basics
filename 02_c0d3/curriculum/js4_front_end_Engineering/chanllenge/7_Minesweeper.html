@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .body {
+            margin: 0px;
+            padding: 0px;
+        }
+
+        .block {
+            display: inline-block;
+
+            /* otherwise the default padding and margin will affect the block position */
+            vertical-align: top;
+
+            cursor: pointer;
+            text-align: center;
+            padding-top: 10px;
+            width: 50px;
+            height: 50px;
+            background-color: #eee;
+            border: 1px solid #000;
+            box-sizing: border-box;
+        }
+
+        .selected {
+            background-color: #aaa
+        }
+
+
+        .flagged {
+            background-color: #f00;
+        }
+    </style>
+</head>
+
+<body>
+    <script>
+        const width = 10;
+        let blockList = []
+
+
+        //recursive func to check on every element of blockList, if it is selected or bomb
+        const isWin = (r = 0, c = 0) => {
+            // to check the whole 2D Blocklist has been ran through
+            if (r === width) return true
+
+            // to check the row has been ran through
+            if (c === width) return isWin(r + 1, 0)
+
+            // if not Bomb or not selected, game is not over, this function return false
+            if (blockList[r][c].isEmpty()) return false
+
+            return isWin(r, c + 1)
+
+        }
+
+
+
+        //block class
+        function Block(r, c) {
+            const block = document.createElement('div')
+            this.isBomb = false
+
+            block.classList.add('block')
+            document.body.append(block)
+
+            //oncontextmenu, flagged red 
+            block.oncontextmenu = (e) => {
+                if (block.classList.contains('selected')) return
+                if (block.classList.contains('flagged')) {
+                    e.preventDefault()
+                    return block.classList.remove('flagged')
+                    //doesnt work
+                }
+                block.classList.add('flagged')
+                e.preventDefault()
+            }
+
+            //clickon : 
+            block.onclick = () => {
+                //className.includes, classList.contains
+                if (block.classList.contains('selected')) return
+                // has to use className, for selecting on flagged
+                block.className = 'block selected'
+
+                if (isWin()) {
+                    if (confirm('You Win. Play Again?')) return setGame()
+                }
+
+                if (this.isBomb === true) {
+                    if (confirm('You Lose. Play Again?')) {
+                        return setGame();
+                    }
+                }
+
+                //to check bombs around
+                const surrounds = [
+                    [r - 1, c - 1],
+                    [r - 1, c],
+                    [r - 1, c + 1],
+                    [r, c - 1],
+                    [r, c + 1],
+                    [r + 1, c - 1],
+                    [r + 1, c],
+                    [r + 1, c + 1]
+                ]
+
+                const val = surrounds.reduce((acc, e) => {
+                    if (blockList[e[0]] && blockList[e[0]][e[1]] && blockList[e[0]][e[1]].isBomb) {
+                        acc += 1
+                        return acc
+                    }
+                    return acc
+                }, 0)
+                block.innerHTML = val || ''
+
+                if (val) return
+
+                // recursive to find the next block with bomb surrounding
+                surrounds.forEach(([r, c]) => {
+                    if (blockList[r] && blockList[r][c])
+                        return blockList[r][c].select()
+                })
+
+            }
+
+            this.select = () => {
+                return block.onclick()
+            }
+
+            this.isEmpty = () => {
+                // if both of these two conditions returns false
+                // and this function returns true, means game not win 
+
+                // if any of these two conditions returns true, means this block is checked 
+                return !(block.className.includes('selected') || this.isBomb === true)
+            }
+        }
+
+
+        const setGame = () => {
+            document.body.style.width = `${width * 50}px`
+            document.body.innerHTML = ''
+            blockList = [] // Reset the blockList for a new game
+            buildBlock()
+            setBomb()
+
+        }
+
+
+
+        const buildBlock = (r = 0, c = 0, store = []) => {
+            if (r === width) return
+            if (c === width) {
+                blockList.push(store)
+                return buildBlock(r + 1, 0, [])
+            }
+            const blockEle = new Block(r, c)
+            store.push(blockEle)
+            return buildBlock(r, c + 1, store)
+        }
+
+        const setBomb = (idx = 0) => {
+            if (idx === 10) return
+            const r = Math.floor(Math.random() * 10)
+            const c = Math.floor(Math.random() * 10)
+
+            if (blockList[r][c].isBomb === true) return setBomb(idx)
+
+            blockList[r][c].isBomb = true
+
+            return setBomb(idx + 1)
+        }
+
+        setGame()
+
+        // const test = blockList.map((e) => {
+        //     return e.map((e2) => {
+        //         return e2.isBomb;
+        //     })
+        // })
+        // console.log(test);
+
+
+
+    </script>
+</body>
+
+</html>

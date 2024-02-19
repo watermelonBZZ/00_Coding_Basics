@@ -1,0 +1,85 @@
+<h1>Friends Listbjj</h1>
+Name:<input type="text" class="nameInput">
+Age:<input type="text" class="ageInput">
+<button class="submit">Submit</button>
+
+<div class="display"></div>
+
+
+<script>
+    const display = document.querySelector('.display')
+    const nameInput = document.querySelector('.nameInput')
+    const ageInput = document.querySelector('.ageInput')
+
+
+    //初始设置
+    //读取本地储存信息，如果没有则是'[]'（因为JSON为字符串，所以这里空值也是）
+    const localNameData = localStorage.getItem('name') || '[]'
+    const localAgeData = localStorage.getItem('age') || '[]'
+
+    //把读取的本地数据，转为js，array
+    let names = JSON.parse(localNameData)
+    let ages = JSON.parse(localAgeData)
+
+
+    //submit button & input value
+    //***每点击一次submit，就会读取输入的value，如果没有输入就是‘’（空值），被存在各自的array里，不会影响index的配对 
+    const subButton = document.querySelector('.submit')
+    subButton.onclick = () => {
+
+        const newNameData = nameInput.value
+        names.push(newNameData)
+
+        const newAgeData = ageInput.value
+        ages.push(newAgeData)
+
+        renderDisplay()
+        nameInput.value = ''
+        ageInput.value = ''
+
+    }
+
+
+
+    //渲染储存的（array）
+    const renderDisplay = () => {
+        // 储存、更新（添加或者删除都要）列表之后都要先更新本地localStorage
+        localStorage.setItem('name', JSON.stringify(names))
+        localStorage.setItem('age', JSON.stringify(ages))
+
+        //渲染data数据（就是把data的elements全部添加到html里相对应的div里）
+        //***记得传入的function要写return，不然reduce的acc会一直是空值往下传
+        display.innerHTML = names.reduce(
+            (acc, e, i) => {
+                return acc + `<div><h2 class="friendName">${e}</h2><h3 class="friendAge">${ages[i]}</h3></div>`
+
+            }, ''
+        )
+
+        // 每个元素都会有一个onclick，点了之后是在data列表中删除该element，然后重新渲染展示块
+        const friendNames = document.querySelectorAll('.friendName')
+        const friendAges = document.querySelectorAll('.friendAge')
+        friendNames.forEach((e, i) => {
+            e.onclick = () => {
+                names.splice(i, 1)
+                ages.splice(i, 1)
+                renderDisplay()
+            }
+        })
+
+        friendAges.forEach((e, i) => {
+            e.onclick = () => {
+                names.splice(i, 1)
+                ages.splice(i, 1)
+                renderDisplay()
+            }
+        })
+
+    }
+
+
+
+    renderDisplay()
+
+
+</script>

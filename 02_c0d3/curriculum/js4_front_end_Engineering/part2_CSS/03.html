@@ -1,0 +1,151 @@
+<style>
+    .videoContainer {
+        width: 100%;
+        position: fixed;
+        top: 0px;
+        left: 0px;
+        background: rgba(20, 40, 50, 1);
+        text-align: center;
+    }
+
+    .vPlayer {
+        height: 400px;
+    }
+
+    .videoCaption {
+        position: absolute;
+        top: 10px;
+        background: rgba(20, 40, 50, 0.3);
+        font-size: 30px;
+        color: rgba(255, 255, 255, 1);
+        padding: 5px;
+        width: 100%;
+    }
+
+    .inputContainer {
+        width: 600px;
+        margin: 430px auto 20 auto;
+    }
+
+    .captionInput {
+        width: 300px;
+    }
+
+    .caption {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .caption h5 {
+        width: 100%;
+    }
+
+    .control {
+        width: 100px;
+    }
+</style>
+<div class="videoContainer">
+    <video class="vPlayer" src="https://songz.c0d3.com/js4/exercises/pubDomainRemix.mp4" controls></video>
+    <div class="videoCaption"></div>
+</div>
+
+<div class="inputContainer">
+    <h3>Add Caption</h3>
+    <input class="captionInput" type="text" placeholder="Caption">
+    <input class="startInput" type="text" placeholder="Start (ms)">
+    <input class="endInput" type="text" placeholder="End (ms)">
+    <button class="submit">Save</button>
+    <hr>
+    <div class="captionList">
+        <div class="caption">
+            Hello World
+        </div>
+    </div>
+</div>
+
+<script>
+    const videoElement = document.querySelector('.vPlayer')
+    const videoCaption = document.querySelector('.videoCaption')
+
+    videoElement.addEventListener('timeupdate', () => {
+        const curMS = videoElement.currentTime * 1000
+        const captionsAfterCurrent = captions.filter((e) => {
+            return e.start <= curMS
+        })
+        const validCaptions = captionsAfterCurrent.filter((e) => {
+            return e.end > curMS
+        })
+
+        let captionText = ''
+        if (validCaptions.length) {
+            captionText = validCaptions[0].txt
+        }
+
+        videoCaption.innerText = captionText
+    })
+
+    let captions = [{
+        txt: "A beautiful Typewriter",
+        start: 0,
+        end: 3000
+    }, {
+        txt: "On to a big piece of paper",
+        start: 3000,
+        end: 7000
+    }, {
+        txt: "Transitioning to Video!",
+        start: 7000,
+        end: 8000
+    }, {
+        txt: "Video of horse, then magazine",
+        start: 8000,
+        end: 13000
+    }]
+
+    const captionList = document.querySelector('.captionList')
+
+    const render = () => {
+        captionList.innerHTML = captions.reduce((acc, e) => {
+            return acc + `
+            <div class="caption">
+            <h5>${e.txt}</h5>
+            <p class="control startAt">${e.start}</p>
+            <p class="control endAt">${e.end}</p>
+            </div>
+          `
+        }, '')
+        const captionElementList = captionList.querySelectorAll('.caption')
+        captionElementList.forEach((e, i) => {
+            e.addEventListener('click', () => {
+                if (confirm(`Remove caption: ${captions[i].txt}?`)) {
+                    captions.splice(i, 1)
+                    render()
+                }
+            })
+        })
+    }
+    render()
+
+    const submitButton = document.querySelector('.submit')
+    const captionInput = document.querySelector('.captionInput')
+    const startInput = document.querySelector('.startInput')
+    const endInput = document.querySelector('.endInput')
+    submitButton.addEventListener('click', () => {
+        const captionTxt = captionInput.value
+        if (captionTxt.length < 3) {
+            return
+        }
+        const startTime = +startInput.value
+        const endTime = +endInput.value
+
+        if (!Number.isInteger(startTime) || !Number.isInteger(endTime)) {
+            return
+        }
+
+        captions.push({
+            txt: captionTxt,
+            start: startTime,
+            end: endTime
+        })
+        render()
+    })
