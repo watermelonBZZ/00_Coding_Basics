@@ -236,3 +236,66 @@ const navigate = useNavigate();
     }}
 >
 ```
+
+## Advanced State Context API
+
+### s4-p37-p39
+
+### What-is-the-Context-API?
+
+### Creating-and-Providing-a-Context
+
+### Consuming-the-Context
+
+创建一个 component，然后传递进去的 props 是 global 的，每个子 component 都可以直接调用
+
+```
+//Step1
+// 创建全局context，在最顶层（component申明的外面）
+// 这里没有定义初始值
+
+const PostContext = createContext();
+
+//Step2
+//PostContext也就是一个component
+//在要使用context(props)的components的共同的、最top的parent component中jsx中引入<PostContext.Provider>
+//把需要传递的props全部放进一个对象中传入
+<PostContext.Provider
+      value={{
+        posts: searchedPosts,
+        onClearPosts: handleClearPosts,
+        onAddPost: handleAddPost,
+      }}
+    >
+
+//Step3
+//需要context(props)的component中，申明对应props
+//consume
+const { onClearPosts } = useContext(PostContext);
+
+```
+
+### s4-p40-Advanced-Pattern-A-Custom-Provider-and-Hook
+
+1.把`createContext()` 和`.Provider`方法写进一个自定义的 component 中并导出，目的是使 App component 更加干净
+（注意是否需要传入`{children}`）
+
+2.把`useContext(PostContext)`的返回结果作为一个值导出，可以使 consumer 中调用更遍历？
+
+```
+//原来
+const { onClearPosts } = useContext(PostContext);
+
+//转变后
+function usePost() {
+  const context = useContext(PostContext);
+  if (context === undefined)
+    throw new Error("PostContext was used outside of the PostProvider");
+  return context;
+}
+
+const { onClearPosts } = usePost();
+
+```
+
+### s4-p41-Thinking-In-React:-Advanced-State-Management
