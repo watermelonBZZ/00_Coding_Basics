@@ -277,10 +277,10 @@ const { onClearPosts } = useContext(PostContext);
 
 ### s4-p40-Advanced-Pattern-A-Custom-Provider-and-Hook
 
-1.把`createContext()` 和`.Provider`方法写进一个自定义的 component 中并导出，目的是使 App component 更加干净
+1.把`createContext()` 和`.Provider`方法写进一个自定义的 component 中并导出，目的是通过一个 component 及 props 使 App component 更加干净
 （注意是否需要传入`{children}`）
 
-2.把`useContext(PostContext)`的返回结果作为一个值导出，可以使 consumer 中调用更遍历？
+2.把`useContext(PostContext)`的返回结果作为一个值导出，这样可以直接调用 context 里面储存的 state 和 function，不用通过 1 里面的 component 传入
 
 ```
 //原来
@@ -299,3 +299,7 @@ const { onClearPosts } = usePost();
 ```
 
 ### s4-p41-Thinking-In-React:-Advanced-State-Management
+
+![](./00-files/s4-p41-Thinking-In-React-Advanced-State-Management-1.png)
+![](./00-files/s4-p41-Thinking-In-React-Advanced-State-Management-2.png)
+![](./00-files/s4-p41-Thinking-In-React-Advanced-State-Management-3.png)
