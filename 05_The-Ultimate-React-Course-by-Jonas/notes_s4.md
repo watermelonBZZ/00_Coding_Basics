@@ -154,7 +154,7 @@ different options for CSS in React
 
 ### s4-p24-Using-CSS-Modules
 
-CSS Modules 里面写申明 classname 后，
+CSS Modules 里面申明 classname 后，
 在导入对应的 component 里面时，会在 classname 后面自动生成一串字符串，所以不同的 CSS Modules 里就算有相同的 className 也不会冲突
 
 global css class 方法一：
@@ -162,7 +162,7 @@ global css class 方法一：
 
 global css class 方法二：
 CSS Modules 里也可以申明，`:global(.className)`，就可以避免自动生成的字符串。
-主要应用在一些外部外部生成的 className 上
+主要应用在一些外部生成的 className 上
 
 ```
 因为这个active是<NavLink>自动生成的，所以用global
