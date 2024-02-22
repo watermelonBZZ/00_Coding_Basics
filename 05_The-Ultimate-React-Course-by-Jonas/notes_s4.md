@@ -303,3 +303,64 @@ const { onClearPosts } = usePost();
 ![](./00-files/s4-p41-Thinking-In-React-Advanced-State-Management-1.png)
 ![](./00-files/s4-p41-Thinking-In-React-Advanced-State-Management-2.png)
 ![](./00-files/s4-p41-Thinking-In-React-Advanced-State-Management-3.png)
+
+### Finishing-the-City-View
+
+在不同的 component 中，使用 context 创建及管理的数据
+
+### Including-a-Map-With-the-Leaflet-Library
+
+Leaflet 提供现成的 components，可以直接使用，用以在页面展示地图
+
+`npm i react-leaflet leaflet`
+
+在 index.css 中导入
+`@import "https://unpkg.com/leaflet@1.9.3/dist/leaflet.css";`
+
+注意一开始页面空白是因为没有给 css 样式 height
+
+`<Popup>`会自动给生成的 html 标签添加 className，方便 css 直接设置样式
+
+### Interacting-With-the-Map
+
+思路：
+打开页面的时候，map 组件会根据 useState(mapPosition) 的默认值渲染地图
+
+当点击 CityList 中的 item 时，刷新`searchParams`,更新`mapLat`和`mapLng`
+然后将这两个数据储存在 mapPosition 中，会触发`<ChangeCenter position={mapPosition}></ChangeCenter>` 组件更新及渲染，设置新的地图
+
+另外，因为 mapPosition 储存了之前的位置信息，所以返回 back 按钮触发时，url 变成`http://localhost:5173/app/cities`，不会使得地图展示为默认位置，而是上次互动保留的位置
+
+```
+const [mapPosition, setMapPosition] = useState([40, 0]);
+
+const [searchParams] = useSearchParams();
+const mapLat = searchParams.get("lat");
+const mapLng = searchParams.get("lng");
+
+useEffect(
+  function () {
+    if (mapLat && mapLng) setMapPosition([mapLat, mapLng]);
+  },
+  [mapLat, mapLng]
+);
+
+//useMap()只在<MapContainer>组件的后代组件中使用有效
+function ChangeCenter({ position }) {
+const map = useMap();
+map.setView(position);
+return null;
+  }
+```
+
+注：因为都是在 jsx 中操作，所以从`"react-leaflet"`导入的 `useXXXX` 方法，不能直接在 jsx 中使用，需要放在一个 component 里面调用，遵循 react 原则
+
+### Setting-Map-Position-With-Geolocation
+
+把之前做的 useGeoLocation 写成一个 hook 导入 Map component 中，这样可以调用 user 当前的地理位置，更新地图
+
+注：从对象中提取值并可能重命名这些变量时，你可以遵循以下格式（原始：新）：
+`const { originalKeyName: newVariableName } = sourceObject;`
+
+组件负责 UI 的构建，需要返回 JSX。(如果只是为了调用函数可以返回 null，如：上节不渲染任何 DOM 元素，只用于地图事件的监听，和更新数据)
+钩子用于在函数组件内部管理状态、生命周期和其他特性，它们返回数据或函数，不直接返回 JSX。
