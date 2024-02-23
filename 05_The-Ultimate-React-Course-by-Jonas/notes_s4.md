@@ -364,3 +364,57 @@ return null;
 
 组件负责 UI 的构建，需要返回 JSX。(如果只是为了调用函数可以返回 null，如：上节不渲染任何 DOM 元素，只用于地图事件的监听，和更新数据)
 钩子用于在函数组件内部管理状态、生命周期和其他特性，它们返回数据或函数，不直接返回 JSX。
+
+### Creating-a-New-City
+
+完善 form 组件
+
+- url 中没有 lat 和 lng 时，form 显示为空
+- 使用 datePicker 更新选择日期标签
+- form 通过 post 请求添加新的城市至 Api
+
+注意：hooks 需要在组件的顶层调用，不能在事件处理器、useEffect 的回调函数或任何其他函数内部调用。确保 Hooks 的调用顺序在每次组件渲染时都是一致的。
+
+`useCities` Hook 是在 `handleSubmit` 函数内部调用的，这违反了 Hooks 的使用规则。要修复这个问题，你应该在组件的顶层调用 useCities，然后在 `handleSubmit` 或其他函数中使用这些值或方法。
+
+- 导入 context 中 loading 状态，渲染 ui 不同效果
+- `handleSubmit`可以是 async
+- 删除城市：使用`"DELETE"`请求方法来删除数据中的城市
+
+注：添加、修改、删除，都分为两部分，修改 data.json 文件中的数据列表(remote data)，更新名为 cities 的 state，用以更新 ui 渲染(ui data)
+
+### Advanced-State-Management-System:-Context-and-useReducer
+
+最开始，对于 context 里面储存、修改数据（state）的方法是多个 useState 和其中的 set 方法。
+这一节把多个 states 合并在一个 initialState 中，并传入 useReducer，通过 reducer 来管理 initialState 的值
+
+注：
+
+- 这里 fetch data 是 async，所以要先把功能函数改为 async fetch 加上 await，然后把 dispatch 接在后面
+- 因为是 async 所以不是把 dispatch 传递给 context return 的 provider 标签，一般来说可以把 dispatch 传给 provider，在需要的组件中调用
+
+### Adding-Fake-Authentication:-Implementing-"Login"
+
+卡 bug，卡了半天
+Provider 里面的`value={{<statesName>}}`,例如 FakeAuthContext 里面`<AuthContext.Provider value={{ user, isAuthenticated, login, logout }}>`
+
+### Adding-Fake-Authentication:-Protecting-a-Route
+
+如何阻止未登录状态下访问页面内容
+
+```
+export default function ProtectedRoute({ children }) {
+  const { isAuthenticated } = useAuth;
+  const navigate = useNavigate();
+
+  useEffect(
+    function () {
+      if (!isAuthenticated) navigate("/");
+    },
+    [isAuthenticated, navigate]
+  );
+  //页面一开始刚打开时，如果不设定条件，会返回children components，然后children components会调用空的user，报错，所以只有isAuthenticated为true再return
+
+  return isAuthenticated ? children : null;
+}
+```
