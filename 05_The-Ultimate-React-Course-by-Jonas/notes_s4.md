@@ -418,3 +418,142 @@ export default function ProtectedRoute({ children }) {
   return isAuthenticated ? children : null;
 }
 ```
+
+## Performance-Optimization-and-Advance-useEffect
+
+### A-Surprising-Optimization-Trick-With-children
+
+react UI 更新 render 的 trigger 有三种
+state, context
+
+re-render 会引发 children 的 re-render，但==不会引发 props==
+
+### Understanding-memo
+
+### memo-in-Practice
+
+memo 一般用在会造成明显延迟的 component 上，这样当 parent 更新时， 不用 children props 方式调用的 memo component 不会更新
+
+问题：为什么一个组件用了 memo()，但是当该组件有 props 传入的时候，还是会每次重新渲染
+因为每一次渲染 props 都是新的 value
+
+解决办法：useMemo()
+
+### Understanding-useMemo-and-useCallback
+
+使用 useMemo()的场景
+
+### useMemo-in-Practice
+
+需要一个箭头函数，和 dependencies，和 useEffect()差不多
+useMemo()返回且保存一个 value
+useMemo(() => {},[])
+
+### useCallback-in-Practice
+
+useCallback()保存一个 function
+const Name = useCallback(function Name(){})
+
+### Optimizing-Bundle-Size-With-Code-Splitting
+
+在 vite 中，创建 bundle
+`npm run build`
+
+Bundle 是一个包含页面所有 JScode 的文件，一般来说会被部署到 server 上，在用户发送请求后被下载到本地渲染
+
+当 bundle 文件过大时，可以使用 lazy()函数来惰性导入模块
+
+`lazy(()=>import("PagesComponentAddress"))`
+
+配合`<Suspense fallback={<ComponentName />}>`使用
+因为用了 lazy 之后，就会按需求下载，出现延迟的话，会展示 suspense 里面的组件
+
+### useEffect-Rules-and-Best-Practices
+
+useEffect()的 dependency 是 state,prop,context,以及引用他们的 variable
+但是不要把 array 和 object 作为 dependency，因为每次渲染他们都是新的 reference
+
+useEffect()可以用在以下三个功能，但不是首选，避免滥用
+
+- 用户互动更新 state（首选是 eventhandler）
+- 从 api 获取数据（首选是 react Query 库）
+- 同步更新 state
+
+### CHALLENGE-#1:-Fix-Performance-Issues-in-"Workout-Timer"
+
+因为倒计时组件每秒刷新，会引起 props，components 每次被刷新，造成不必要的渲染
+所以把不必要的 components 用 memo()，变量 variable 用 useMemo()解决
+
+### Using-Helper-Functions-In-Effects
+
+问题 1：
+当点击加号增加时间是，会触发 useEffect，更新时间渲染的组件
+但是因为 playsound 是作为一个普通的 function 在组件里，上一步增加时间的 useEffect 更新时间后，playsound 也会成为一个新的 function，引发 useEffect 更新，此时，因为计算时间的参数数值没有变化， 所以时间组件会再次更新成旧的
+![](./00-files/s4-p73-Using-Helper-Functions-In-Effects.png)
+
+解决办法：
+用 useCallBack()记住 playsound
+
+但这会造成问题 1 类似的问题，因为 playsound 有一个 dependency，allowSound，所以当点击调整 allowSound 状态的时候，playsound 会被更新成为一个新的函数，引发 useEffect 更新
+
+解决办法：
+把 playsound 这个函数放在一个新的 useEffect 中，当 duration 变化的时候，会调用
+
+### s4-p78-Creating-a-Redux-Store
+
+![](./00-files/s4-p77-Creating-a-Redux-Store.png)
+
+redux 的 reducer 函数和 useReducer()的差不多，但 default 不一样，不会 throw new Error()
+
+### s4-p79-Working-With-Action-Creators
+
+Action-Creators 就是把原来 dispatch()传入的对象写进一个单独的函数里面，然后再传入 dispatch()
+
+```
+store.dispatch({ type: "account/deposit", payload: 500 })
+
+
+function deposit(amount) {
+  return { type: "account/deposit", payload: amount };
+}
+
+
+store.dispatch(deposit(500));
+```
+
+### s4-p80-Adding-More-State:-Customer
+
+用`combineReducers()`将多个 reducers 作为 object 的属性传入
+
+```
+const rootReducer = combineReducers({
+  account: accountReducer,
+  customer: customerReducer,
+});
+const store = createStore(rootReducer);
+```
+
+### s4-p80-Professional-Redux-File-Structure:-State-Slices
+
+把 reducer，initialState，action creator 一起放入对应文件夹且导入
+
+### s4-p81-Back-to-React!-Connecting-our-Redux-App-With-React
+
+`npm i react-redux`
+
+```
+import { Provider } from "react-redux";
+
+//这里类似context，用Provider把state作为global传递给所有组件
+<Provider store={store}>
+  <App />
+</Provider>
+
+//useSelector()调用全局state store的属性
+const customer = useSelector((store) => store.customer.fullName);
+
+//注意，当store里面的state改变时，其组件会被重新渲染
+
+
+
+```
