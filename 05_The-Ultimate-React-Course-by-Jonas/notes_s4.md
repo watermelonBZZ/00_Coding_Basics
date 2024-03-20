@@ -557,3 +557,133 @@ const customer = useSelector((store) => store.customer.fullName);
 
 
 ```
+
+### s4-p84-The-Legacy-Way-of-Connecting-Components-to-Redux
+
+`mapStateToProps()` and `connect()`是在 react hooks 之前，特别是 react-redux 的 `useSelector()` ， `useDispatch()` ，会被用来讲 components 和 state 进行链接
+
+写法比较复杂
+
+```
+//mapStateToProps()用来获取store里面的数据
+
+function BalanceDisplay({ balance }) {
+  return <div className="balance">{formatCurrency(balance)}</div>;
+}
+
+function mapStateToProps(store) {
+  return {
+    balance: store.account.balance,
+  };
+}
+
+export default connect(mapStateToProps)(BalanceDisplay);
+
+//但是在useSelector中，只要一句话
+const { balance } = useSelector((store) => store.account);
+
+```
+
+### s4-p85-Redux-Middleware-and-Thunks
+
+因为 reducer 里面不能有 async 的函数，所以如果出现从 api 获取数据时，就需要在 dispatch 和 reducer 之间使用 middleware（redux 里叫 Thunks），确保 action 返回的 object 里面包含了所需要的数据
+
+注：没有 middleware 时，dispatch 会直接把 action 传给 reducer
+
+![](./00-files/s4-p85-Redux-Middleware-and-Thunks-1.png)
+
+### s4-p86-Making-an-API-Call-With-Redux-Thunks
+
+```
+const myAsyncActionCreator = () => {
+  return async (dispatch, getState) => {
+    // 异步逻辑，比如 API 调用
+    const response = await fetch('some-api-url');
+    const data = await response.json();
+    // 派发一个同步 action 去更新你的 store
+    dispatch({ type: 'MY_ACTION_TYPE', payload: data });
+  };
+};
+
+// 在你的组件或其他地方使用
+dispatch(myAsyncActionCreator());
+
+```
+
+dispatch(myAsyncActionCreator()); 这个原理时，当 dispatch 执行时发现 myAsyncActionCreator()返回的是一个异步函数，所以会用 Redux Thunk，然后更新 store。但这个里面实际上是通过 dispatch({ type: 'MY_ACTION_TYPE', payload: data });更新 store 的对吗?
+
+调用 myAsyncActionCreator() - 这个函数调用返回一个异步函数，这个异步函数接受 dispatch 和 getState 作为参数。这部分是因为 myAsyncActionCreator 是一个被称为 "thunk" 的特殊类型的 action creator。
+
+传递给 Redux Thunk 中间件 - 由于你在 store 的配置中应用了 Redux Thunk 中间件，当你派发（dispatch）一个函数时，Redux Thunk 会拦截这个函数。如果没有 Redux Thunk，Redux 会因为你尝试派发一个非对象类型的 action 而抛出错误。
+
+执行异步函数 - Redux Thunk 中间件调用这个异步函数，并将 dispatch 和 getState 作为参数传递给它。这允许你在函数内执行异步操作（如 API 调用）并在适当的时候使用 dispatch 来派发标准的同步 action。
+
+更新 Store - 在异步操作完成后（例如，收到了 API 响应），你使用 dispatch({ type: 'MY_ACTION_TYPE', payload: data }); 来派发一个同步 action。这个 action 是一个普通的对象，包含了要通知 reducer 处理的 type 和 payload。Reducer 接收到这个 action 后，根据 action 的 type 和 payload 来更新 state，最终导致 store 的更新。
+
+因此，虽然 myAsyncActionCreator() 本身通过异步操作更新 store，但实际上它是通过在异步操作完成后派发一个同步 action 来实现的。这个同步 action 被 reducer 处理，从而更新了 store 的 state。
+
+### s4-p86-The-Redux-DevTools
+
+npm i redux-devtools-extension
+装不了，因为不支持 redux5.0
+
+### s4-p89-Creating-the-Store-With-RTK
+
+RTK 是 redux 的升级，比如`configureStore()`就结合了`thunk`, `applyMiddleware`, `combineReducers`, `createStore`
+
+```
+const store = configureStore({
+  reducer: {
+    account: accountReducer,
+    customer: customerReducer,
+  },
+});
+```
+
+### s4-p90-Creating-the-Account-Slice
+
+```
+const accountSlice = createSlice({
+  //前缀
+  name: "account",
+
+  //初始state
+  initialState,
+
+
+  reducers: {
+    //这个deposit相当于原来的case
+    deposit(state, action) {
+      state.balance += action.payload;
+    },
+    withdraw(state, action) {
+      state.balance -= action.payload;
+    },
+
+    // 当action在RTK中需要超过一个参数时，首先把action变成一个对象，然后调用prepare()传入参数并返回一个含有payload的object,再调用reducer(){}写之前的action
+
+    requestLoan: {
+      // 如果action的payload超过一个参数，则需要用prepare()
+      prepare(amount, purpose) {
+        return {
+          payload: { amount, purpose },
+        };
+      },
+
+      reducer(state, action) {
+        //和之前的传统写法很大的不一样,这里不用return 一个完整的state，直接return就可以
+        if (state.loan > 0) return;
+
+        state.loan = action.payload.amount;
+        state.loanPurpose = action.payload.purpose;
+        state.balance = state.balance + action.payload.amount;
+      },
+    },
+    payLoan(state, action) {
+      state.balance -= state.loan;
+      state.loan = 0;
+      state.loanPurpose = "";
+    },
+  },
+});
+```
