@@ -687,3 +687,29 @@ const accountSlice = createSlice({
   },
 });
 ```
+
+关于`{ createSlice } from "@reduxjs/toolkit"`的理解
+
+之前，reducer 和 functionForAction 是分开的，且要分开 export
+
+action 是 functionForAction 返回的结果
+用 dispatch(functionForAction())把 action 传入 reducer，根据 type 来更新并返回 state
+
+`createSlice`方法
+
+```
+createSlice({
+  name: "Name", //之前type中'/'之前的前缀
+  initialState,
+  reducers:{
+    //这个里面写原来的functionForAction名，并把state作为一个mutable数据直接修改
+    functionForAction(state, action){
+      state.property = action.payload
+    }
+
+    //注意在dispatch时，写dispatch(functionForAction(arg1<,arg2>))，RTK会自动识别arg传入action并调用对应的functionForAction()
+
+    //如果超过一个arg就要注意手动传入action
+  }
+})
+```
